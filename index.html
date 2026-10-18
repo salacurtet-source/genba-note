@@ -1,0 +1,1712 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>現場の数字ノート</title>
+<meta name="description" content="土木の現場で働きはじめた人のための、％・単位・切り盛り・土量の学習アプリ">
+<meta name="theme-color" content="#4B5B2B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="数字ノート">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{color-scheme:light}
+html,body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+.topbar{top:0!important;background:var(--cover);padding-top:env(safe-area-inset-top,0px)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Dela+Gothic+One&display=swap">
+<style>
+/* Layout: 測量の野帳のページ。方眼紙の上に1カラム、表紙色のヘッダーとトラロープ、下にタブ */
+:root{
+  --paper:#F4F5EC;
+  --grid:#E3E7D6;
+  --surface:#FFFFFF;
+  --surface-2:#EFF1E5;
+  --ink:#22281A;
+  --ink-soft:#5A6249;
+  --line:#CDD3BC;
+  --cover:#4B5B2B;
+  --cover-ink:#F2F4E6;
+  --olive:#4B5B2B;
+  --mark:#F2C21B;
+  --mark-soft:#FBEBA6;
+  --mark-ink:#2B2406;
+  --pencil:#C23F29;
+  --ok:#2D7A4C;
+  --ok-bg:#E2F0E5;
+  --ng-bg:#F7E2DC;
+  --stripe:#22281A;
+  --tape:#F2C21B;
+  --tape-ink:#1D2014;
+  --tape-red:#B3301C;
+  --f-display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#15180F; --grid:#1E2318; --surface:#1E2317; --surface-2:#272D1F; --ink:#ECEFE0; --ink-soft:#AAB297; --line:#3A4230;
+    --cover:#2C3519; --cover-ink:#ECEFE0; --olive:#B9C98A; --mark:#F0C23A; --mark-soft:#4A3F12; --mark-ink:#1E1903;
+    --pencil:#EE7A62; --ok:#6FCB92; --ok-bg:#1D3224; --ng-bg:#3A2019; --stripe:#0E100A; --tape:#E3B526;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#15180F; --grid:#1E2318; --surface:#1E2317; --surface-2:#272D1F; --ink:#ECEFE0; --ink-soft:#AAB297; --line:#3A4230;
+  --cover:#2C3519; --cover-ink:#ECEFE0; --olive:#B9C98A; --mark:#F0C23A; --mark-soft:#4A3F12; --mark-ink:#1E1903;
+  --pencil:#EE7A62; --ok:#6FCB92; --ok-bg:#1D3224; --ng-bg:#3A2019; --stripe:#0E100A; --tape:#E3B526;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:14px 14px;
+  color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;
+}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+ul,ol{margin:0}
+b,strong{font-weight:700}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,7.6vw,40px);line-height:1.35}
+h2{font-family:var(--f-display);font-weight:400;font-size:clamp(23px,6vw,30px);line-height:1.4}
+h3{font-size:19px;font-weight:700;line-height:1.5}
+h4{font-size:16px;font-weight:700;line-height:1.5}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.12em;color:var(--olive)}
+.lead{font-size:17px}
+.muted{color:var(--ink-soft)}
+.small{font-size:13.5px}
+.hl{background:linear-gradient(transparent 58%,var(--mark-soft) 58%);padding:0 2px}
+.num-font{font-family:var(--f-display);font-weight:400}
+
+/* header */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.top{background:var(--cover);color:var(--cover-ink);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:10px;min-height:54px}
+.brand{font-family:var(--f-display);font-size:17px;letter-spacing:.04em;white-space:nowrap}
+.where{margin-left:auto;font-size:13px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.backbtn{appearance:none;border:1px solid rgba(255,255,255,.35);background:transparent;color:var(--cover-ink);font:inherit;font-weight:700;font-size:14px;padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.tora{height:6px;background:repeating-linear-gradient(-45deg,var(--mark) 0 9px,var(--stripe) 9px 18px)}
+
+/* main */
+main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px calc(100px + env(safe-area-inset-bottom,0px))}
+.view{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.stack{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card.plain{background:transparent;border-style:dashed}
+.sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+
+/* memo (付箋) */
+.memo{background:var(--mark);color:var(--mark-ink);border-radius:4px 4px 16px 4px;padding:18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 0 rgba(0,0,0,.10)}
+.memo .lbl{font-size:12px;font-weight:700;letter-spacing:.12em}
+.memo .big{font-family:var(--f-display);font-size:20px;line-height:1.55}
+.memo p{color:var(--mark-ink)}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:12px;padding-block:6px 4px}
+.hero p{font-size:17px;max-width:36em}
+
+/* rules */
+.rules{display:flex;flex-direction:column;gap:0}
+.rule{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+.rule:first-of-type{border-top:0;padding-top:4px}
+.rule .k{font-family:var(--f-display);font-size:15px;background:var(--ink);color:var(--paper);border-radius:999px;width:30px;height:30px;display:grid;place-items:center;margin-top:2px}
+.rule h4{font-size:17px}
+.rule p{font-size:14.5px;color:var(--ink-soft)}
+
+/* lesson links */
+.lesson-list{display:flex;flex-direction:column;gap:10px}
+.lesson-link{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer}
+.lesson-link:hover{border-color:var(--olive)}
+.lesson-link .no{font-family:var(--f-display);font-size:26px;color:var(--olive);width:1.4em;text-align:center}
+.lesson-link .txt{display:flex;flex-direction:column;min-width:0}
+.lesson-link .t{font-weight:700;font-size:17px;line-height:1.5}
+.lesson-link .s{font-size:13px;color:var(--ink-soft)}
+.lesson-link .go{font-size:24px;color:var(--ink-soft)}
+.hanko{font-family:var(--f-display);color:var(--pencil);border:2.5px solid var(--pencil);border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-size:15px;transform:rotate(-10deg);line-height:1}
+.hanko.lg{width:64px;height:64px;font-size:20px;animation:stamp .35s ease-out}
+@keyframes stamp{from{transform:scale(1.7) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(-10deg);opacity:1}}
+@media (prefers-reduced-motion: reduce){.hanko.lg{animation:none}}
+
+/* ask list */
+.ask{display:flex;flex-direction:column;gap:8px}
+.ask li{list-style:none;background:var(--surface-2);border-radius:10px;padding:10px 14px;font-weight:700}
+.ask{padding:0}
+
+/* buttons */
+.btn{font:inherit;font-weight:700;font-size:16px;padding:12px 18px;border-radius:12px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;min-height:48px;text-align:center}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.yellow{background:var(--mark);border-color:var(--mark);color:var(--mark-ink)}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+
+/* form */
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field>span{font-size:13px;font-weight:700;color:var(--ink-soft)}
+.inrow{display:flex;gap:8px;align-items:center;min-width:0}
+input[type=text]{font:inherit;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;width:100%;min-width:0;padding:9px 12px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+input[type=search]{font:inherit;font-size:17px;width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
+select{font:inherit;font-size:17px;font-weight:700;padding:10px 8px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);flex:0 0 auto}
+input[type=range]{width:100%;accent-color:var(--olive);height:32px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:460px){.grid2.s1,.grid3{grid-template-columns:1fr}}
+.unit-tag{font-weight:700;font-size:17px;color:var(--ink-soft);flex:0 0 auto}
+
+/* segmented */
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 auto;font:inherit;font-size:14px;font-weight:700;padding:10px 12px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* results */
+.result{background:var(--surface-2);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:12px}
+.steps li{padding-left:2px}
+.steps li::marker{font-weight:700;color:var(--olive)}
+.ans{font-family:var(--f-display);font-weight:400;font-size:30px;color:var(--pencil);line-height:1.2;font-variant-numeric:tabular-nums}
+.say{font-weight:700;font-size:17px;background:var(--surface);border-radius:10px;padding:10px 14px}
+.formula{font-family:var(--f-display);font-size:18px;color:var(--pencil);line-height:1.5}
+
+/* calculator keys */
+.keys{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle;margin-top:4px}
+kbd{font-family:var(--f-body);font-weight:700;font-size:16px;min-width:40px;padding:5px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);border-bottom-width:3px;color:var(--ink);text-align:center;font-variant-numeric:tabular-nums;line-height:1.5}
+kbd.op{background:var(--cover);color:var(--cover-ink);border-color:var(--cover)}
+kbd.eq{background:var(--mark);color:var(--mark-ink);border-color:var(--mark)}
+
+/* money analogy */
+.money{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center}
+.money .a,.money .b{background:var(--surface-2);border-radius:10px;padding:10px 6px;font-weight:700;line-height:1.4}
+.money .a .n,.money .b .n{font-family:var(--f-display);font-size:22px;display:block}
+.money .eq{font-family:var(--f-display);font-size:20px}
+
+/* ladder */
+.ladder{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:6px;text-align:center}
+.ladder .u{font-family:var(--f-display);font-size:26px;background:var(--surface);border:2px solid var(--ink);border-radius:12px;padding:8px 4px;line-height:1.3}
+.ladder .u small{display:block;font-family:var(--f-body);font-size:12px;font-weight:700;color:var(--ink-soft)}
+.ladder .arw{font-size:12.5px;font-weight:700;line-height:1.5;color:var(--ink-soft)}
+.ladder .arw b{color:var(--pencil);font-size:14px}
+
+/* decimal viz */
+.dviz{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.dviz .row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dviz .num{font-family:var(--f-display);font-size:28px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 12px;letter-spacing:.08em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.dviz .un{font-family:var(--f-display);font-size:20px}
+.dviz .pt{color:var(--pencil);font-size:1.25em;line-height:0}
+.dviz .add{color:var(--olive);text-decoration:underline 3px;text-underline-offset:5px}
+.dviz .mv{font-size:14px;font-weight:700;color:var(--ink-soft);padding-left:12px}
+.dviz .mv b{color:var(--pencil)}
+.allu{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.allu .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:700;font-variant-numeric:tabular-nums}
+.allu .eqs{color:var(--ink-soft);font-weight:700}
+
+/* tape */
+.tape-fig{width:100%;max-width:520px}
+.tape-fig svg{width:100%;height:auto;display:block}
+.tape-read{font-size:16px}
+.tape-read b{font-variant-numeric:tabular-nums}
+.check{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
+.check input{width:20px;height:20px;accent-color:var(--olive)}
+
+/* percent grid */
+.pg-wrap{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:18px;align-items:center}
+@media (max-width:520px){.pg-wrap{grid-template-columns:1fr}}
+.pgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;width:100%;max-width:260px}
+.pgrid i{aspect-ratio:1;border-radius:3px;background:var(--surface-2);border:1px solid var(--line);max-width:100%}
+.pgrid i.on{background:var(--mark);border-color:var(--mark)}
+.pg-out .big{font-family:var(--f-display);font-size:32px;line-height:1.3}
+.pg-out .big .pc{color:var(--pencil)}
+
+/* fork */
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:460px){.fork{grid-template-columns:1fr}}
+.fork-item{border:2px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:6px;min-width:0}
+.tag{display:inline-block;font-family:var(--f-display);font-size:13px;background:var(--ink);color:var(--paper);padding:2px 12px;border-radius:999px;align-self:flex-start;line-height:1.7}
+.fork-q{font-size:17px;font-weight:700}
+.fork-ex{font-size:14px;color:var(--ink-soft)}
+
+/* bar visual */
+.bar{height:16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--mark);border-radius:999px;max-width:100%}
+
+/* soil bars */
+.soilbars{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.soilbars .sb{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.soilbars .bx{height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:2px solid var(--ink)}
+.soilbars i{display:block;width:64%;max-width:90px;background:var(--mark);border:2px solid var(--ink);border-bottom:0;border-radius:4px 4px 0 0}
+.soilbars b{font-size:15px}
+.soilbars span{font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+
+/* list */
+.dl{display:flex;flex-direction:column;gap:0}
+.dl > div{display:grid;grid-template-columns:7.5em 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.dl > div:first-child{border-top:0}
+.dl dt,.dl .dt{font-weight:700}
+@media (max-width:420px){.dl > div{grid-template-columns:1fr;gap:2px}}
+
+/* figure svg */
+.fig{width:100%;max-width:520px}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{font-size:12.5px;color:var(--ink-soft);margin-top:4px}
+svg .s-ink{fill:var(--ink)}
+svg .s-soft{fill:var(--ink-soft)}
+svg .s-fill{fill:var(--mark-soft);stroke:var(--ink);stroke-width:2}
+svg .s-fill2{fill:var(--mark);stroke:var(--ink);stroke-width:2}
+svg .s-line{stroke:var(--ink);stroke-width:3;fill:none}
+svg .s-dash{stroke:var(--ink-soft);stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+svg .s-red{stroke:var(--pencil);stroke-width:3;fill:none}
+svg .t-red{fill:var(--pencil)}
+svg text{font-family:var(--f-body);font-weight:700}
+
+/* trap */
+.trap{display:flex;flex-direction:column;gap:8px}
+.trap .x,.trap .o{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;border-radius:10px;padding:10px 12px}
+.trap .x{background:var(--ng-bg)}
+.trap .o{background:var(--ok-bg)}
+.trap .mk{font-family:var(--f-display);font-size:18px;line-height:1.5}
+.trap .x .mk{color:var(--pencil)}
+.trap .o .mk{color:var(--ok)}
+.trap .eqn{font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
+/* done area */
+.done-area{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-top:4px}
+.done-ok{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+/* tables */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:14px;font-weight:700;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:40px}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:15px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:top}
+td.w{white-space:normal;min-width:11em}
+th{font-size:12.5px;color:var(--ink-soft);background:var(--surface-2);font-weight:700}
+tr:last-child td{border-bottom:0}
+td.big{font-family:var(--f-display);font-size:17px}
+td .red{color:var(--pencil);font-weight:700}
+.tsec{display:flex;flex-direction:column;gap:10px;scroll-margin-top:80px}
+.tnote{font-size:13.5px;color:var(--ink-soft)}
+.tformula{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:10px 14px;font-weight:700}
+.tformula .formula{font-size:16px}
+
+/* words */
+.wlist{display:flex;flex-direction:column;gap:10px}
+.word{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.word summary{list-style:none;display:grid;grid-template-columns:5.2em 1fr auto;gap:12px;align-items:center;padding:12px 14px;cursor:pointer}
+.word summary::-webkit-details-marker{display:none}
+.word .sym{font-family:var(--f-display);font-size:19px;line-height:1.3;text-align:center;background:var(--surface-2);border-radius:10px;padding:8px 4px;overflow-wrap:anywhere}
+.word .yomi{font-size:12.5px;color:var(--ink-soft);font-weight:700;display:block}
+.word .one{font-weight:700;display:block;line-height:1.5}
+.word .plus{font-size:20px;color:var(--ink-soft);transition:transform .2s}
+.word[open] .plus{transform:rotate(45deg)}
+.word .body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+.word .body h4{font-size:13px;color:var(--olive);letter-spacing:.06em}
+.word .cat{font-size:11.5px;font-weight:700;color:var(--ink-soft);letter-spacing:.06em}
+.empty{padding:24px;text-align:center;color:var(--ink-soft)}
+@media (prefers-reduced-motion: reduce){.word .plus{transition:none}}
+
+/* quiz */
+.score{display:flex;flex-wrap:wrap;gap:8px 16px;font-weight:700;font-size:14px;color:var(--ink-soft)}
+.score b{color:var(--ink);font-size:18px;font-variant-numeric:tabular-nums}
+.qcard{gap:14px}
+.q-cat{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--olive)}
+.q-text{font-size:20px;font-weight:700;line-height:1.6}
+.choices{display:grid;gap:10px}
+.choice{font:inherit;font-size:19px;font-weight:700;text-align:left;padding:14px 16px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:56px;font-variant-numeric:tabular-nums;line-height:1.5}
+.choice:hover:not(:disabled){border-color:var(--olive)}
+.choice.right{border-color:var(--ok);background:var(--ok-bg)}
+.choice.wrong{border-color:var(--pencil);background:var(--ng-bg)}
+.choice:disabled{cursor:default}
+.fb{border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.fb.ok{background:var(--ok-bg)}
+.fb.ng{background:var(--ng-bg)}
+.fb .head{font-family:var(--f-display);font-size:20px}
+.fb.ok .head{color:var(--ok)}
+.fb.ng .head{color:var(--pencil)}
+.hintbox{background:var(--mark-soft);border-radius:10px;padding:10px 14px;font-weight:700}
+.linkbtn{appearance:none;background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--olive);text-decoration:underline;text-underline-offset:3px;cursor:pointer;align-self:flex-start}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabs button{appearance:none;border:0;background:none;color:var(--ink-soft);font:inherit;font-size:11.5px;font-weight:700;padding:7px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-height:60px}
+.tabs .ic{width:44px;height:28px;border-radius:999px;display:grid;place-items:center}
+.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-current="page"]{color:var(--ink)}
+.tabs button[aria-current="page"] .ic{background:var(--mark)}
+.tabs button[aria-current="page"] svg{stroke:var(--mark-ink)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <header class="top">
+    <div class="top-in">
+      <button class="backbtn" id="backBtn" type="button" hidden>‹ まなぶ</button>
+      <div class="brand">現場の数字ノート</div>
+      <div class="where" id="where">はじめに</div>
+    </div>
+  </header>
+  <div class="tora" aria-hidden="true"></div>
+</div>
+
+<main>
+
+<!-- ============ HOME ============ -->
+<section class="view" id="view-home">
+  <div class="hero">
+    <p class="eyebrow">土木の現場1年生のための</p>
+    <h1>数字は、<span class="hl">覚えなくていい</span>。<br>見ればいい。</h1>
+    <p>わからなくなったら、このノートを開いて確かめればOK。電卓もどんどん使おう。現場のベテランも、メジャーと電卓は毎日使っています。</p>
+  </div>
+
+  <div class="card">
+    <h3>3つのお守りルール</h3>
+    <div class="rules">
+      <div class="rule"><span class="k">1</span><div><h4>幅や厚さは mm、高さは m（小数3けた）</h4><p>「150」は 150mm。「12.500」は 12.5m。小数3けたは mm までピッタリという意味。</p></div></div>
+      <div class="rule"><span class="k">2</span><div><h4>％ は「÷100」のこと</h4><p>30% は 30÷100 で 0.3。5% は 0.05。</p></div></div>
+      <div class="rule"><span class="k">3</span><div><h4>計算の前に、単位をそろえる</h4><p>mm と m をまぜたまま計算しない。これだけでミスが激減します。</p></div></div>
+    </div>
+  </div>
+
+  <div class="stack">
+    <div class="sec-title"><h3>おすすめの順番</h3><span class="muted small">1つ3〜5分。読んだらハンコ。</span></div>
+    <div class="lesson-list" id="homePath"></div>
+  </div>
+
+  <div class="card">
+    <h3>現場で聞いていい、ひとこと</h3>
+    <p class="muted">確認するのは、仕事ができる人のやり方。聞くほど「ていねいな人」と思われます。</p>
+    <ul class="ask">
+      <li>「この数字、mm ですか？ m ですか？」</li>
+      <li>「ここは切りですか？盛りですか？」</li>
+      <li>「この高さは、どの BM からですか？」</li>
+      <li>「何％勾配ですか？」</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>練習の記録</h3>
+    <p id="homeStats">まだ練習していません。1問からでOK。</p>
+    <div class="btn-row">
+      <button class="btn" type="button" data-view="quiz">練習する</button>
+      <button class="btn ghost" type="button" data-view="table">早見表を見る</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEARN ============ -->
+<section class="view" id="view-learn" hidden>
+  <div class="stack" id="learnList">
+    <h2>まなぶ</h2>
+    <p class="muted">上から順番がおすすめ。全部読まなくても、困ったところだけでも大丈夫。</p>
+    <div class="lesson-list" id="learnLinks"></div>
+  </div>
+
+  <!-- Lesson 1: units -->
+  <article class="stack lesson" id="L-unit" hidden>
+    <p class="eyebrow">レッスン1 ・ 約3分</p>
+    <h2>長さの単位<br>mm・cm・m</h2>
+    <p class="lead">現場でいちばんよく出てくるのが長さ。まずは<strong>お金</strong>に置きかえてみよう。</p>
+
+    <div class="card">
+      <div class="money">
+        <div class="a"><span class="n">1000円札</span>1枚</div><div class="eq">＝</div><div class="b"><span class="n">1円玉</span>1000枚</div>
+        <div class="a"><span class="n">1 m</span>メートル</div><div class="eq">＝</div><div class="b"><span class="n">1000 mm</span>ミリ</div>
+      </div>
+      <p>どっちも同じ量。大きいお札で数えるか、小さい小銭で数えるかのちがいだけ。<br><strong class="hl">小さい単位で数えると、数字は大きくなる。</strong>これがぜんぶの基本です。</p>
+    </div>
+
+    <h3>3つの単位の関係</h3>
+    <div class="card">
+      <div class="ladder">
+        <div class="u">m<small>1</small></div>
+        <div class="arw"><b>×100</b> →<br>← ÷100</div>
+        <div class="u">cm<small>100</small></div>
+        <div class="arw"><b>×10</b> →<br>← ÷10</div>
+        <div class="u">mm<small>1000</small></div>
+      </div>
+      <p class="small muted">下の小さい数字は、ぜんぶ同じ長さ（1m）を表したときの数。</p>
+      <p>かけ算・わり算が苦手なら、<strong>小数点を動かすだけ</strong>でOK。</p>
+      <div class="dl">
+        <div><span class="dt">mm → m</span><span>点を<b>左へ3つ</b>（1250 → 1.25）</span></div>
+        <div><span class="dt">m → mm</span><span>点を<b>右へ3つ</b>（2.4 → 2400）</span></div>
+        <div><span class="dt">mm → cm</span><span>点を<b>左へ1つ</b>（455 → 45.5）</span></div>
+        <div><span class="dt">cm → mm</span><span>点を<b>右へ1つ</b>（90 → 900）</span></div>
+      </div>
+      <p class="small muted">動かす場所が足りないときは 0 を足す。2.4m → 2.400 → 2400mm。</p>
+    </div>
+
+    <h3>やってみよう：単位を変える</h3>
+    <div class="card">
+      <div class="grid2 s1">
+        <label class="field"><span>数字</span><input type="text" id="uc-in" inputmode="decimal" value="1250" autocomplete="off"></label>
+        <div class="field"><span>単位</span>
+          <div class="inrow">
+            <select id="uc-from" aria-label="元の単位"><option>mm</option><option>cm</option><option>m</option><option>km</option></select>
+            <span class="unit-tag">→</span>
+            <select id="uc-to" aria-label="変えたい単位"><option>mm</option><option>cm</option><option selected>m</option><option>km</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="result" id="uc-out" aria-live="polite"></div>
+    </div>
+
+    <h3>メジャー（コンベックス）を読もう</h3>
+    <div class="card">
+      <p>メジャーの<strong>大きい数字は cm</strong>。数字と数字の間の<strong>小さい線1本が 1mm</strong>。赤い線のところを読んでみよう。</p>
+      <div class="tape-fig" id="tp-fig"></div>
+      <input type="range" id="tp-range" min="1000" max="2500" step="1" value="1235" aria-label="メジャーを動かす">
+      <div class="result">
+        <div class="tape-read" id="tp-read"></div>
+        <button class="btn ghost" type="button" id="tp-show" hidden>答えを見る</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" type="button" id="tp-rand">ランダムに動かす</button>
+        <label class="check"><input type="checkbox" id="tp-hide">答えをかくして練習</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>土木の図面は mm と m がまざる</h4>
+      <p>幅や厚さは mm（「150」＝ 150mm）。高さや長いきょりは m で、小数点のあとが3けた（「12.500」＝ 12.5m）。<strong>小数3けたは mm までピッタリ</strong>という意味なので、点を右へ3つ動かせば mm になります。</p>
+      <div class="dl">
+        <div><span class="dt">12.500 m</span><span>→ 12500 mm（12m50cm）</span></div>
+        <div><span class="dt">0.150 m</span><span>→ 150 mm（15cm）</span></div>
+        <div><span class="dt">0.005 m</span><span>→ 5 mm</span></div>
+      </div>
+      <p class="small muted">図面のすみ（表題欄や注記）に「単位：mm」などと書いてあることが多いので、一度見ておくと安心。</p>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">1m ＝ 1000mm</p>
+      <p>あとは小数点を動かすだけ。忘れたら早見表を見ればいい。</p>
+    </div>
+    <div class="done-area" data-lesson="unit"></div>
+  </article>
+
+  <!-- Lesson 2: percent -->
+  <article class="stack lesson" id="L-pct" hidden>
+    <p class="eyebrow">レッスン2 ・ 約5分</p>
+    <h2>パーセント（％）</h2>
+    <p class="lead">％は「<strong>100個に分けたうちの、いくつ分か</strong>」を表す言葉。それだけです。</p>
+
+    <div class="card">
+      <div class="pg-wrap">
+        <div class="pgrid" id="pg" aria-hidden="true"></div>
+        <div class="pg-out stack" id="pg-out" aria-live="polite"></div>
+      </div>
+      <input type="range" id="pg-range" min="0" max="100" step="1" value="30" aria-label="パーセントを動かす">
+    </div>
+
+    <div class="memo">
+      <span class="lbl">％を見たら</span>
+      <p class="big">「÷100」のこと</p>
+      <p>30% → 0.3　　5% → 0.05　　100% → 1（ぜんぶ）</p>
+    </div>
+
+    <h3>どっちの計算？ 見分け方は1つだけ</h3>
+    <div class="fork">
+      <div class="fork-item">
+        <span class="tag">型A</span>
+        <p class="fork-q">％が<span class="hl">わかっている</span></p>
+        <p class="fork-ex">「200本の30%は何本？」</p>
+        <p class="formula">全体 × ％ ÷ 100</p>
+      </div>
+      <div class="fork-item">
+        <span class="tag">型B</span>
+        <p class="fork-q">％を<span class="hl">知りたい</span></p>
+        <p class="fork-ex">「200m中50m終わった。何%？」</p>
+        <p class="formula">部分 ÷ 全体 × 100</p>
+      </div>
+    </div>
+    <p>おまけの<strong>型C</strong>は「10%増し」「20%引き」。材料を多めに注文するときによく使います。</p>
+
+    <h3>やってみよう：電卓でこう押す</h3>
+    <div class="card">
+      <div class="seg" id="pc-seg" role="group" aria-label="計算の型">
+        <button type="button" data-m="A" aria-pressed="true">型A ％から数</button>
+        <button type="button" data-m="B" aria-pressed="false">型B 何％？</button>
+        <button type="button" data-m="C" aria-pressed="false">型C 増し・引き</button>
+      </div>
+      <div id="pc-A" class="grid2">
+        <label class="field"><span>全体（もとの数）</span><input type="text" id="pa-t" inputmode="decimal" value="250" autocomplete="off"></label>
+        <label class="field"><span>％</span><div class="inrow"><input type="text" id="pa-p" inputmode="decimal" value="30" autocomplete="off"><span class="unit-tag">%</span></div></label>
+      </div>
+      <div id="pc-B" class="grid2" hidden>
+        <label class="field"><span>部分（終わった数など）</span><input type="text" id="pb-a" inputmode="decimal" value="60" autocomplete="off"></label>
+        <label class="field"><span>全体</span><input type="text" id="pb-t" inputmode="decimal" value="240" autocomplete="off"></label>
+      </div>
+      <div id="pc-C" class="stack" hidden>
+        <div class="grid2">
+          <label class="field"><span>もとの数</span><input type="text" id="pcc-n" inputmode="decimal" value="120" autocomplete="off"></label>
+          <label class="field"><span>％</span><div class="inrow"><input type="text" id="pcc-p" inputmode="decimal" value="10" autocomplete="off"><span class="unit-tag">%</span></div></label>
+        </div>
+        <div class="seg" id="pcc-seg" role="group" aria-label="増しか引きか">
+          <button type="button" data-d="up" aria-pressed="true">増し（多くする）</button>
+          <button type="button" data-d="down" aria-pressed="false">引き（少なくする）</button>
+        </div>
+      </div>
+      <div class="result" id="pc-out" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <h4>電卓の「%」ボタンは使わなくてOK</h4>
+      <p>% ボタンは電卓の種類によって動きがちがうので、まちがいのもと。<strong>× と ÷ だけ</strong>で、ぜんぶ計算できます。</p>
+    </div>
+
+    <h3>現場で出てくる％</h3>
+    <div class="card">
+      <div class="dl">
+        <div><span class="dt">進み具合</span><span>「200m中50m終わった」→ 50 ÷ 200 × 100 ＝ <b>25%</b>（型B）</span></div>
+        <div><span class="dt">割増・ロス</span><span>「100本必要、10%多めに」→ 100 × 1.1 ＝ <b>110本</b>（型C）</span></div>
+        <div><span class="dt">勾配</span><span>「2%勾配」→ 1m 進んで 20mm 下がる（レッスン5）</span></div>
+        <div><span class="dt">割（わり）</span><span>1割 ＝ 10%、3割 ＝ 30%、1割5分 ＝ 15%</span></div>
+      </div>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">％を出す ＝ 部分 ÷ 全体 × 100<br>数を出す ＝ 全体 × ％ ÷ 100</p>
+      <p>迷ったら「％はもうわかってる？」と自分に聞く。</p>
+    </div>
+    <div class="done-area" data-lesson="pct"></div>
+  </article>
+
+  <!-- Lesson 3: area & volume -->
+  <article class="stack lesson" id="L-av" hidden>
+    <p class="eyebrow">レッスン3 ・ 約4分</p>
+    <h2>広さと量<br>㎡（平米）・㎥（立米）</h2>
+    <p class="lead">「広さ」は <strong>㎡（へいべい）</strong>、「量」は <strong>㎥（りゅうべい）</strong>。読み方がわかるだけで、現場の会話がぐっと聞き取りやすくなります。</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 340 175" role="img" aria-label="1平米と1立米の図">
+        <rect x="24" y="24" width="112" height="112" class="s-fill"/>
+        <text x="80" y="86" text-anchor="middle" font-size="20" class="s-ink">1㎡</text>
+        <text x="80" y="156" text-anchor="middle" font-size="13" class="s-soft">1m</text>
+        <text x="14" y="84" text-anchor="middle" font-size="13" class="s-soft">1m</text>
+        <polygon points="196,52 226,22 316,22 286,52" class="s-fill2"/>
+        <polygon points="286,52 316,22 316,112 286,142" class="s-fill"/>
+        <rect x="196" y="52" width="90" height="90" class="s-fill"/>
+        <text x="241" y="104" text-anchor="middle" font-size="20" class="s-ink">1㎥</text>
+        <text x="241" y="162" text-anchor="middle" font-size="13" class="s-soft">1m</text>
+        <text x="186" y="101" text-anchor="end" font-size="13" class="s-soft">1m</text>
+        <text x="314" y="138" text-anchor="start" font-size="13" class="s-soft" transform="rotate(-45 314 138)">1m</text>
+      </svg>
+      <figcaption>1㎥ ＝ 1000L。家のお風呂でだいたい5杯分。</figcaption>
+    </figure>
+
+    <div class="grid2 s1">
+      <div class="card">
+        <span class="tag">㎡ へいべい</span>
+        <p class="formula">たて × よこ</p>
+        <p class="small">床・壁・舗装・型枠など、<strong>張る・塗る・敷く</strong>もの。</p>
+      </div>
+      <div class="card">
+        <span class="tag">㎥ りゅうべい</span>
+        <p class="formula">たて × よこ × 厚さ</p>
+        <p class="small">生コン・土・砂利など、<strong>流す・掘る・運ぶ</strong>もの。</p>
+      </div>
+    </div>
+
+    <h3>大事なのは1つだけ。かける前に m にそろえる</h3>
+    <div class="trap">
+      <div class="x"><span class="mk">✕</span><div><p class="eqn">3600 × 2700 ＝ 9,720,000</p><p class="small">mm のままかけると、数字が大きすぎてわけがわからない。</p></div></div>
+      <div class="o"><span class="mk">○</span><div><p class="eqn">3.6 × 2.7 ＝ 9.72 ㎡</p><p class="small">先に m に直してからかける（点を左へ3つ）。</p></div></div>
+    </div>
+
+    <h3>やってみよう</h3>
+    <div class="card">
+      <div class="seg" id="av-seg" role="group" aria-label="広さか量か">
+        <button type="button" data-m="area" aria-pressed="true">広さ ㎡</button>
+        <button type="button" data-m="vol" aria-pressed="false">量 ㎥</button>
+      </div>
+      <div class="grid3">
+        <div class="field"><span>たて</span><div class="inrow"><input type="text" id="av-a" inputmode="decimal" value="3600" autocomplete="off" aria-label="たて"><select id="av-au" aria-label="たての単位"><option selected>mm</option><option>m</option></select></div></div>
+        <div class="field"><span>よこ</span><div class="inrow"><input type="text" id="av-b" inputmode="decimal" value="2700" autocomplete="off" aria-label="よこ"><select id="av-bu" aria-label="よこの単位"><option selected>mm</option><option>m</option></select></div></div>
+        <div class="field" id="av-cf" hidden><span>厚さ・高さ</span><div class="inrow"><input type="text" id="av-c" inputmode="decimal" value="150" autocomplete="off" aria-label="厚さ"><select id="av-cu" aria-label="厚さの単位"><option selected>mm</option><option>m</option></select></div></div>
+      </div>
+      <div class="result" id="av-out" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <h4>現場の例：土間コンクリート</h4>
+      <p>たて 5m、よこ 4m、厚さ 150mm の床にコンクリートを流すなら、150mm → 0.15m にして<br><b>5 × 4 × 0.15 ＝ 3㎥</b>。「生コン 3立米」と注文する量です。</p>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">m にそろえてから、かける</p>
+      <p>2つかけたら ㎡、3つかけたら ㎥。</p>
+    </div>
+    <div class="done-area" data-lesson="av"></div>
+  </article>
+
+  <!-- Lesson 4: height / cut & fill -->
+  <article class="stack lesson" id="L-height" hidden>
+    <p class="eyebrow">レッスン4 ・ 約5分</p>
+    <h2>高さの数字<br>切り・盛り</h2>
+    <p class="lead">土木は「高さ」の仕事。地面を<strong>掘ったり（切り）</strong>、<strong>土を足したり（盛り）</strong>して、図面の高さに合わせます。</p>
+
+    <div class="card">
+      <h4>まず、この3つの言葉だけ</h4>
+      <div class="dl">
+        <div><span class="dt">計画高</span><span>けいかくだか。図面に書いてある<b>仕上がりの高さ</b>。</span></div>
+        <div><span class="dt">地盤高</span><span>じばんだか。<b>いまの地面</b>の高さ。</span></div>
+        <div><span class="dt">BM</span><span>ベンチマーク。高さを測るときの<b>基準の点</b>。</span></div>
+      </div>
+      <p class="small muted">高さは m の小数3けたで書くのがふつう。「12.350」＝ 12m35cm。</p>
+    </div>
+
+    <figure class="fig">
+      <svg viewBox="0 0 340 160" role="img" aria-label="切りと盛りの図">
+        <path d="M20,105 C90,110 140,95 170,70 S260,38 320,40 L320,150 L20,150 Z" style="fill:var(--mark-soft)"/>
+        <path d="M20,105 C90,110 140,95 170,70 S260,38 320,40" class="s-line"/>
+        <line x1="20" y1="70" x2="320" y2="70" style="stroke:var(--ink);stroke-width:2.5;stroke-dasharray:8 5"/>
+        <text x="24" y="62" font-size="13" class="s-ink">計画高（仕上がり）</text>
+        <line x1="80" y1="104" x2="80" y2="80" style="stroke:var(--ok);stroke-width:3"/>
+        <polygon points="73,81 87,81 80,71" style="fill:var(--ok)"/>
+        <text x="72" y="96" text-anchor="end" font-size="14" style="fill:var(--ok)">盛り＋</text>
+        <line x1="270" y1="44" x2="270" y2="61" style="stroke:var(--pencil);stroke-width:3"/>
+        <polygon points="263,60 277,60 270,69" style="fill:var(--pencil)"/>
+        <text x="262" y="94" text-anchor="end" font-size="14" class="t-red">切り−</text>
+        <text x="110" y="138" font-size="12" class="s-soft">いまの地面</text>
+      </svg>
+      <figcaption>計画の線より地面が低いところは土を盛る。高いところは掘る（切る）。</figcaption>
+    </figure>
+
+    <div class="card">
+      <p class="formula">計画高 − いまの高さ</p>
+      <p>答えが<b>＋なら盛る</b>（土を足す）、<b>−（マイナス）なら切る</b>（掘る）。マイナスが苦手でも「−は掘る」と読めばOK。</p>
+    </div>
+
+    <h3>やってみよう：切り？盛り？</h3>
+    <div class="card">
+      <div class="grid2">
+        <label class="field"><span>計画高（図面の高さ）</span><div class="inrow"><input type="text" id="cf-p" inputmode="decimal" value="12.350" autocomplete="off"><span class="unit-tag">m</span></div></label>
+        <label class="field"><span>いまの地面の高さ</span><div class="inrow"><input type="text" id="cf-n" inputmode="decimal" value="12.500" autocomplete="off"><span class="unit-tag">m</span></div></label>
+      </div>
+      <div class="result" id="cf-out" aria-live="polite"></div>
+    </div>
+
+    <h3>レベルとスタッフで高さを測る</h3>
+    <div class="card">
+      <p>レベル（水平を見る機械）をのぞいて、スタッフ（目盛りのついた長い棒）の数字を読みます。<strong>スタッフの数字が大きいほど、その地面は低い。</strong>目線の高さは同じなので、地面が低いほど棒の上のほうを読むからです。</p>
+      <figure class="fig">
+        <svg viewBox="0 0 340 170" role="img" aria-label="レベルとスタッフの図">
+          <path d="M10,140 L120,140 C170,140 200,118 240,118 L330,118 L330,165 L10,165 Z" style="fill:var(--mark-soft)"/>
+          <path d="M10,140 L120,140 C170,140 200,118 240,118 L330,118" class="s-line"/>
+          <rect x="44" y="30" width="12" height="110" style="fill:var(--surface);stroke:var(--ink);stroke-width:2"/>
+          <rect x="284" y="30" width="12" height="88" style="fill:var(--surface);stroke:var(--ink);stroke-width:2"/>
+          <line x1="50" y1="56" x2="290" y2="56" class="s-dash"/>
+          <line x1="163" y1="62" x2="150" y2="139" style="stroke:var(--ink);stroke-width:2"/>
+          <line x1="177" y1="62" x2="190" y2="128" style="stroke:var(--ink);stroke-width:2"/>
+          <rect x="156" y="49" width="28" height="13" rx="3" class="s-ink"/>
+          <circle cx="50" cy="56" r="5" style="fill:var(--pencil)"/>
+          <circle cx="290" cy="56" r="5" style="fill:var(--pencil)"/>
+          <text x="50" y="20" text-anchor="middle" font-size="12" class="s-ink">後視（BM）</text>
+          <text x="290" y="20" text-anchor="middle" font-size="12" class="s-ink">前視</text>
+          <text x="105" y="50" text-anchor="middle" font-size="11" class="s-soft">目線（水平）</text>
+          <text x="50" y="158" text-anchor="middle" font-size="12" class="s-ink">BM</text>
+          <text x="290" y="140" text-anchor="middle" font-size="12" class="s-ink">測る点</text>
+        </svg>
+        <figcaption>左（BM）の地面のほうが低いので、左のスタッフの数字のほうが大きくなる。</figcaption>
+      </figure>
+      <div class="dl">
+        <div><span class="dt">後視（こうし）</span><span>BM に立てたスタッフで読んだ数字</span></div>
+        <div><span class="dt">前視（ぜんし）</span><span>測りたい点で読んだ数字</span></div>
+      </div>
+      <p class="formula">器械高 ＝ BMの高さ ＋ 後視<br>その点の高さ ＝ 器械高 − 前視</p>
+      <div class="grid3">
+        <label class="field"><span>BMの高さ</span><div class="inrow"><input type="text" id="lv-bm" inputmode="decimal" value="10.000" autocomplete="off"><span class="unit-tag">m</span></div></label>
+        <label class="field"><span>後視（BMで読む）</span><div class="inrow"><input type="text" id="lv-bs" inputmode="decimal" value="1.520" autocomplete="off"><span class="unit-tag">m</span></div></label>
+        <label class="field"><span>前視（その点で読む）</span><div class="inrow"><input type="text" id="lv-fs" inputmode="decimal" value="1.250" autocomplete="off"><span class="unit-tag">m</span></div></label>
+      </div>
+      <div class="result" id="lv-out" aria-live="polite"></div>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">計画高 − いまの高さ<br>＋なら盛る、−なら切る</p>
+      <p>スタッフの数字が大きいほど、地面は低い。</p>
+    </div>
+    <div class="done-area" data-lesson="height"></div>
+  </article>
+
+  <!-- Lesson 4: slope -->
+  <article class="stack lesson" id="L-slope" hidden>
+    <p class="eyebrow">レッスン5 ・ 約5分</p>
+    <h2>勾配と法面<br>かたむきの表し方</h2>
+    <p class="lead">勾配は「どれくらい かたむいているか」。土木でよく使うのは、道路や排水の<strong>％勾配</strong>と、土の斜面の<strong>1:1.5</strong>の2つです。</p>
+
+    <div class="card">
+      <h4>なぜ、かたむけるの？</h4>
+      <p>水を流すため。道路、駐車場、側溝、排水管は、ほんの少しかたむけておかないと水たまりができてしまいます。</p>
+      <p class="small muted">道路を横切る向きのかたむきが「横断勾配」（2% 前後が多い）、進む向きのかたむきが「縦断勾配」。</p>
+    </div>
+
+    <h3>％勾配</h3>
+    <div class="card">
+      <p class="formula">2% ＝ 1m（1000mm）進んで 20mm 下がる</p>
+      <p>100 進んで 2 下がる、という意味。レッスン2の「型A」と同じ計算です。</p>
+    </div>
+
+    <h3>やってみよう</h3>
+    <div class="card">
+      <div class="seg" id="sl-seg" role="group" aria-label="知りたいもの">
+        <button type="button" data-m="h" aria-pressed="true">何mm 下がる？</button>
+        <button type="button" data-m="p" aria-pressed="false">何% 勾配？</button>
+        <button type="button" data-m="n" aria-pressed="false">法面の横幅</button>
+      </div>
+      <div class="grid2">
+        <label class="field" id="sl-Hf" hidden><span>法面の高さ</span><div class="inrow"><input type="text" id="sl-H" inputmode="decimal" value="2" autocomplete="off"><span class="unit-tag">m</span></div></label>
+        <label class="field" id="sl-nf" hidden><span>勾配</span><div class="inrow"><span class="unit-tag">1 :</span><input type="text" id="sl-n" inputmode="decimal" value="1.5" autocomplete="off"></div></label>
+        <label class="field" id="sl-df"><span>進むきょり</span><div class="inrow"><input type="text" id="sl-d" inputmode="decimal" value="5" autocomplete="off"><span class="unit-tag">m</span></div></label>
+        <label class="field" id="sl-pf"><span>勾配</span><div class="inrow"><input type="text" id="sl-p" inputmode="decimal" value="2" autocomplete="off"><span class="unit-tag">%</span></div></label>
+        <label class="field" id="sl-hf" hidden><span>下がる高さ</span><div class="inrow"><input type="text" id="sl-h" inputmode="decimal" value="75" autocomplete="off"><span class="unit-tag">mm</span></div></label>
+      </div>
+      <div class="result" id="sl-out" aria-live="polite"></div>
+      <figure class="fig" id="sl-fig"></figure>
+    </div>
+
+    <h3>法面（のりめん）の 1:1.5</h3>
+    <div class="card">
+      <p>土を掘ったり盛ったりしてできる斜面が「法面」。<b>1:1.5</b> は<b>高さ1 に対して、横に1.5</b>という意味です。「1割5分」とも言います。</p>
+      <p class="formula">横幅 ＝ 高さ × 1.5</p>
+      <p>右の数字が大きいほど、ゆるやか。土がくずれないように、土の種類や高さで決まっています。上の計算で「法面の横幅」を選ぶと試せます。</p>
+      <p class="small muted">上の角を法肩（のりかた）、下の角を法尻（のりじり）と言います。</p>
+    </div>
+    <div class="card plain">
+      <h4>おまけ：寸勾配</h4>
+      <p class="small">建物の屋根で使う言い方。「4寸勾配」＝ 横に 10 進んで 4 上がる。土木ではあまり出てきません。</p>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">きょり(m) × ％ × 10<br>＝ 下がる高さ(mm)</p>
+      <p>5m で 2% なら 5 × 2 × 10 ＝ 100mm。<br>法面の横幅 ＝ 高さ × 右の数字（1:1.5 なら ×1.5）。</p>
+    </div>
+    <div class="done-area" data-lesson="slope"></div>
+  </article>
+
+  <!-- Lesson 6: soil volume & dump trucks -->
+  <article class="stack lesson" id="L-soil" hidden>
+    <p class="eyebrow">レッスン6 ・ 約5分</p>
+    <h2>土の量と<br>ダンプの台数</h2>
+    <p class="lead">掘った土は<strong>ふくらむ</strong>。固めると<strong>へる</strong>。土木ならではの計算です。</p>
+
+    <div class="card">
+      <h4>土には3つの状態がある</h4>
+      <div class="soilbars" aria-hidden="true">
+        <div class="sb"><div class="bx"><i style="height:60px"></i></div><b>地山</b><span>掘る前</span></div>
+        <div class="sb"><div class="bx"><i style="height:72px"></i></div><b>ほぐし</b><span>掘ったあと<br>× L（例 1.2）</span></div>
+        <div class="sb"><div class="bx"><i style="height:54px"></i></div><b>締固め</b><span>固めたあと<br>× C（例 0.9）</span></div>
+      </div>
+      <div class="dl">
+        <div><span class="dt">地山（じやま）</span><span>掘る前の、自然のままの土。掘る量はふつうこの状態で数える。</span></div>
+        <div><span class="dt">L（エル）</span><span>ほぐすと何倍になるか。1.2 なら 1.2倍にふくらむ。</span></div>
+        <div><span class="dt">C（シー）</span><span>締め固めると何倍になるか。0.9 なら 9割にへる。</span></div>
+      </div>
+      <p class="small muted">L と C は土の種類で変わります。数字は現場で決まっているものを使ってね。</p>
+    </div>
+
+    <h3>やってみよう</h3>
+    <div class="card">
+      <div class="seg" id="so-seg" role="group" aria-label="計算の種類">
+        <button type="button" data-m="dig" aria-pressed="true">掘った土を運ぶ</button>
+        <button type="button" data-m="fill" aria-pressed="false">盛るのに必要な土</button>
+      </div>
+      <div class="grid3">
+        <label class="field"><span id="so-vl">掘る量（地山）</span><div class="inrow"><input type="text" id="so-v" inputmode="decimal" value="50" autocomplete="off"><span class="unit-tag">㎥</span></div></label>
+        <label class="field" id="so-cf" hidden><span>C（締固め）</span><input type="text" id="so-c" inputmode="decimal" value="0.9" autocomplete="off"></label>
+        <label class="field"><span>L（ほぐし）</span><input type="text" id="so-l" inputmode="decimal" value="1.2" autocomplete="off"></label>
+        <label class="field"><span>ダンプ1台に積む量</span><div class="inrow"><input type="text" id="so-t" inputmode="decimal" value="5.5" autocomplete="off"><span class="unit-tag">㎥</span></div></label>
+      </div>
+      <p class="small muted">入っている数字は例です。1台に積む量は、ダンプの大きさや会社の決まりで変わります。</p>
+      <div class="result" id="so-out" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <h4>台数は「切り上げ」</h4>
+      <p>60 ÷ 5.5 ＝ 10.9… 台。小数が出たら、<b>1台たして 11台</b>。0.9台分の土も運ばないといけないからです。</p>
+      <p class="small muted">ダンプは半分の台数にはできない。「小数が出たら次の数字」と覚えればOK。</p>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">運ぶ土 ＝ 掘った量 × L<br>台数は割って、切り上げ</p>
+      <p>盛るのに必要な地山 ＝ 盛る量 ÷ C</p>
+    </div>
+    <div class="done-area" data-lesson="soil"></div>
+  </article>
+
+  <!-- Lesson 5: scale -->
+  <article class="stack lesson" id="L-scale" hidden>
+    <p class="eyebrow">レッスン7 ・ 約3分</p>
+    <h2>図面の縮尺<br>1/100 ってなに？</h2>
+    <p class="lead">図面は本物を小さく描いたもの。どれくらい小さくしたかが「縮尺（しゅくしゃく）」です。</p>
+
+    <div class="card">
+      <p><b>1/100</b> ＝ 本物を 100分の1 に縮めて描いた。</p>
+      <p class="formula">図面の 1cm ＝ 本物の 1m</p>
+      <p>図面の上で定規を当てて測った長さに、分母（下の数字）をかければ本物の長さになります。</p>
+      <p class="formula">図面で測った長さ × 分母 ＝ 本物</p>
+      <p class="small muted">土木では、平面図に 1/500 や 1/1000、横断図に 1/100 や 1/200 がよく使われます。縮尺は図面のすみ（表題欄）に書いてあります。</p>
+    </div>
+
+    <h3>やってみよう</h3>
+    <div class="card">
+      <div class="grid2">
+        <label class="field"><span>縮尺</span>
+          <select id="sc-s">
+            <option value="20">1/20</option><option value="30">1/30</option><option value="50">1/50</option>
+            <option value="100" selected>1/100</option><option value="200">1/200</option><option value="500">1/500</option><option value="1000">1/1000</option>
+          </select>
+        </label>
+        <label class="field"><span>図面で測った長さ</span><div class="inrow"><input type="text" id="sc-m" inputmode="decimal" value="35" autocomplete="off"><span class="unit-tag">mm</span></div></label>
+      </div>
+      <div class="result" id="sc-out" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <h4>三角スケールを使えば、計算いらず</h4>
+      <p>三角スケールは縮尺ごとの目盛りがついた定規。図面と同じ縮尺の面を当てれば、本物の長さがそのまま読めます。</p>
+      <p class="small muted">ただし、図面に寸法の数字が書いてあるなら、測るより数字を信じよう。コピーで縮んでいることがあります。</p>
+    </div>
+
+    <div class="memo">
+      <span class="lbl">これだけ覚えればOK</span>
+      <p class="big">測った長さ × 分母 ＝ 本物</p>
+      <p>1/100 なら ×100。図面の 1cm は本物の 1m。</p>
+    </div>
+    <div class="done-area" data-lesson="scale"></div>
+  </article>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="view" id="view-quiz" hidden>
+  <div class="stack">
+    <h2>練習</h2>
+    <p class="muted">まちがえても大丈夫。答えのあとに必ず解き方が出ます。それを読むのが、いちばんの勉強です。</p>
+  </div>
+  <div class="chips" id="qCats" role="group" aria-label="問題の種類"></div>
+  <div class="score" id="qScore"></div>
+  <div class="card qcard" id="qCard">
+    <p class="q-cat" id="qCat"></p>
+    <p class="q-text" id="qText"></p>
+    <button class="linkbtn" type="button" id="qHintBtn">ヒントを見る</button>
+    <div class="hintbox" id="qHint" hidden></div>
+    <div class="choices" id="qChoices"></div>
+    <div class="fb" id="qFb" hidden></div>
+    <button class="btn" type="button" id="qNext" hidden>つぎの問題</button>
+  </div>
+</section>
+
+<!-- ============ TABLE ============ -->
+<section class="view" id="view-table" hidden>
+  <div class="stack">
+    <h2>早見表</h2>
+    <p class="muted">覚えなくていいように、ここに全部まとめました。困ったら開いて見るだけ。</p>
+  </div>
+  <div class="chips" id="tJump">
+    <button type="button" data-t="t-len">長さ</button>
+    <button type="button" data-t="t-civil">土木</button>
+    <button type="button" data-t="t-draw">建物の数字</button>
+    <button type="button" data-t="t-pct">％・割</button>
+    <button type="button" data-t="t-av">広さ・量</button>
+    <button type="button" data-t="t-w">重さ</button>
+    <button type="button" data-t="t-sl">勾配</button>
+    <button type="button" data-t="t-sc">縮尺</button>
+    <button type="button" data-t="t-shaku">尺・坪</button>
+  </div>
+
+  <div class="tsec" id="t-len">
+    <h3>長さ</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th></th><th>mm</th><th>cm</th><th>m</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1mm</td><td>1</td><td>0.1</td><td>0.001</td></tr>
+        <tr><td class="big">1cm</td><td>10</td><td>1</td><td>0.01</td></tr>
+        <tr><td class="big">10cm</td><td>100</td><td>10</td><td>0.1</td></tr>
+        <tr><td class="big">1m</td><td><span class="red">1000</span></td><td>100</td><td>1</td></tr>
+        <tr><td class="big">1km</td><td>1,000,000</td><td>100,000</td><td>1000</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tformula">mm → m は 点を左へ3つ　／　m → mm は 点を右へ3つ</div>
+  </div>
+
+  <div class="tsec" id="t-civil">
+    <h3>土木でよく使う</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>高さの書き方（m）</th><th>mm にすると</th><th>読み方</th></tr></thead>
+      <tbody>
+        <tr><td class="big">12.500</td><td>12500mm</td><td class="w">12m50cm</td></tr>
+        <tr><td class="big">0.150</td><td>150mm</td><td class="w">15cm</td></tr>
+        <tr><td class="big">0.025</td><td>25mm</td><td class="w">2.5cm</td></tr>
+        <tr><td class="big">0.005</td><td>5mm</td><td class="w">5mm</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tformula"><span class="formula">計画高 − いまの高さ</span><br>＋なら盛る ／ −なら切る（掘る）</div>
+    <div class="tformula">レベル：器械高 ＝ BM ＋ 後視　／　その点の高さ ＝ 器械高 − 前視</div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>法面勾配</th><th>高さ1m の横幅</th><th>高さ2m の横幅</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1:0.5</td><td>0.5m</td><td>1.0m</td></tr>
+        <tr><td class="big">1:1.0</td><td>1.0m</td><td>2.0m</td></tr>
+        <tr><td class="big">1:1.5</td><td>1.5m</td><td>3.0m</td></tr>
+        <tr><td class="big">1:1.8</td><td>1.8m</td><td>3.6m</td></tr>
+        <tr><td class="big">1:2.0</td><td>2.0m</td><td>4.0m</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>土の量</th><th>計算</th></tr></thead>
+      <tbody>
+        <tr><td class="big">掘った土を運ぶ量</td><td>地山 × L</td></tr>
+        <tr><td class="big">固めたあとの量</td><td>地山 × C</td></tr>
+        <tr><td class="big">盛るのに必要な地山</td><td>盛る量 ÷ C</td></tr>
+        <tr><td class="big">ダンプの台数</td><td>運ぶ量 ÷ 1台の量 → 切り上げ</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>測点</th><th>起点から</th></tr></thead>
+      <tbody>
+        <tr><td class="big">No.1</td><td>20m</td></tr>
+        <tr><td class="big">No.5</td><td>100m</td></tr>
+        <tr><td class="big">No.5+10</td><td>110m</td></tr>
+        <tr><td class="big">No.10</td><td>200m</td></tr>
+        <tr><td class="big">No.50</td><td>1000m（1km）</td></tr>
+      </tbody>
+    </table></div>
+    <p class="tnote">測点は20mごとが多いけど、現場によってちがうこともあります。</p>
+  </div>
+
+  <div class="tsec" id="t-draw">
+    <h3>建物（木造）でよく出る数字</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>図面の数字</th><th>m にすると</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td class="big">303</td><td>0.303m</td><td class="w">1尺。根太などの間隔</td></tr>
+        <tr><td class="big">455</td><td>0.455m</td><td class="w">1尺5寸。間柱の間隔</td></tr>
+        <tr><td class="big">606</td><td>0.606m</td><td class="w">2尺</td></tr>
+        <tr><td class="big">910</td><td>0.91m</td><td class="w">3尺・半間。サブロク板の短い辺</td></tr>
+        <tr><td class="big">1820</td><td>1.82m</td><td class="w">6尺・1間。サブロク板の長い辺</td></tr>
+        <tr><td class="big">2730</td><td>2.73m</td><td class="w">1間半</td></tr>
+        <tr><td class="big">3640</td><td>3.64m</td><td class="w">2間</td></tr>
+      </tbody>
+    </table></div>
+    <p class="tnote">木造の建物で多い数字。会社や地域によってちがう寸法を使うこともあります。</p>
+  </div>
+
+  <div class="tsec" id="t-pct">
+    <h3>％・割</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>％</th><th>言いかえ</th><th>電卓</th><th>1000 なら</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1%</td><td>100分の1</td><td>÷100</td><td>10</td></tr>
+        <tr><td class="big">5%</td><td>20分の1・5分（ぶ）</td><td>÷20</td><td>50</td></tr>
+        <tr><td class="big">10%</td><td>1割</td><td>÷10</td><td>100</td></tr>
+        <tr><td class="big">20%</td><td>2割・5分の1</td><td>÷5</td><td>200</td></tr>
+        <tr><td class="big">25%</td><td>4分の1</td><td>÷4</td><td>250</td></tr>
+        <tr><td class="big">50%</td><td>半分・5割</td><td>÷2</td><td>500</td></tr>
+        <tr><td class="big">75%</td><td>4分の3</td><td>×0.75</td><td>750</td></tr>
+        <tr><td class="big">100%</td><td>ぜんぶ</td><td>そのまま</td><td>1000</td></tr>
+        <tr><td class="big">110%</td><td>1割増し</td><td>×1.1</td><td>1100</td></tr>
+        <tr><td class="big">90%</td><td>1割引き</td><td>×0.9</td><td>900</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tformula"><span class="formula">数を出す：全体 × ％ ÷ 100</span><br><span class="formula">％を出す：部分 ÷ 全体 × 100</span></div>
+  </div>
+
+  <div class="tsec" id="t-av">
+    <h3>広さ・量</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>単位</th><th>中身</th><th>メモ</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1㎡</td><td>1m × 1m</td><td class="w">へいべい（平米）</td></tr>
+        <tr><td class="big">1坪</td><td>約 3.3㎡</td><td class="w">畳2枚くらい</td></tr>
+        <tr><td class="big">1㎥</td><td>1m × 1m × 1m</td><td class="w">りゅうべい（立米）＝ 1000L</td></tr>
+        <tr><td class="big">水 1㎥</td><td>約 1t</td><td class="w">1000kg</td></tr>
+        <tr><td class="big">生コン 1㎥</td><td>約 2.3t</td><td class="w">水の2倍以上重い</td></tr>
+        <tr><td class="big">土 1㎥</td><td>約 1.8t</td><td class="w">土の種類で変わる</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tformula">㎡ ＝ たて(m) × よこ(m)　／　㎥ ＝ たて(m) × よこ(m) × 厚さ(m)</div>
+  </div>
+
+  <div class="tsec" id="t-w">
+    <h3>重さ・力</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>単位</th><th>だいたい</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1t</td><td>1000kg</td></tr>
+        <tr><td class="big">1kN</td><td>約 100kg 分の力（正確には約102kg）</td></tr>
+        <tr><td class="big">10kN</td><td>約 1t 分の力</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="tsec" id="t-sl">
+    <h3>勾配</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>％勾配</th><th>1m 進むと</th><th>10m 進むと</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1%</td><td>10mm</td><td>100mm</td></tr>
+        <tr><td class="big">1.5%</td><td>15mm</td><td>150mm</td></tr>
+        <tr><td class="big">2%</td><td>20mm</td><td>200mm</td></tr>
+        <tr><td class="big">3%</td><td>30mm</td><td>300mm</td></tr>
+        <tr><td class="big">5%</td><td>50mm</td><td>500mm</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tformula"><span class="formula">きょり(m) × ％ × 10 ＝ 高さ(mm)</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>寸勾配（屋根）</th><th>意味</th><th>角度</th></tr></thead>
+      <tbody>
+        <tr><td class="big">3寸</td><td>10 進んで 3 上がる</td><td>約 16.7°</td></tr>
+        <tr><td class="big">4寸</td><td>10 進んで 4 上がる</td><td>約 21.8°</td></tr>
+        <tr><td class="big">5寸</td><td>10 進んで 5 上がる</td><td>約 26.6°</td></tr>
+        <tr><td class="big">6寸</td><td>10 進んで 6 上がる</td><td>約 31.0°</td></tr>
+        <tr><td class="big">10寸</td><td>10 進んで 10 上がる（矩勾配 かねこうばい）</td><td>45°</td></tr>
+      </tbody>
+    </table></div>
+    <p class="tnote">のり勾配 1:1.5 ＝ 高さ1 に対して横に1.5（1割5分）。数字が大きいほど、ゆるやか。</p>
+  </div>
+
+  <div class="tsec" id="t-sc">
+    <h3>縮尺</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>縮尺</th><th>図面の 1cm は</th><th>図面の 1mm は</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1/20</td><td>20cm</td><td>20mm</td></tr>
+        <tr><td class="big">1/50</td><td>50cm</td><td>50mm</td></tr>
+        <tr><td class="big">1/100</td><td>1m</td><td>100mm</td></tr>
+        <tr><td class="big">1/200</td><td>2m</td><td>200mm</td></tr>
+        <tr><td class="big">1/500</td><td>5m</td><td>500mm</td></tr>
+        <tr><td class="big">1/1000</td><td>10m</td><td>1m</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="tsec" id="t-shaku">
+    <h3>尺・坪（昔からの単位）</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>単位</th><th>だいたい</th><th>メモ</th></tr></thead>
+      <tbody>
+        <tr><td class="big">1分（ぶ）</td><td>約 3mm</td><td class="w">1寸の10分の1</td></tr>
+        <tr><td class="big">1寸</td><td>約 30mm</td><td class="w">正確には 30.3mm</td></tr>
+        <tr><td class="big">1尺</td><td>約 303mm</td><td class="w">10寸</td></tr>
+        <tr><td class="big">1間（けん）</td><td>約 1820mm</td><td class="w">6尺</td></tr>
+        <tr><td class="big">1坪</td><td>約 3.3㎡</td><td class="w">1間 × 1間の広さ</td></tr>
+        <tr><td class="big">サブロク板</td><td>910 × 1820mm</td><td class="w">3尺 × 6尺の合板</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============ WORDS ============ -->
+<section class="view" id="view-words" hidden>
+  <div class="stack">
+    <h2>単位と記号の辞典</h2>
+    <p class="muted">タップすると「なぜ現場で使うのか」と例が出ます。</p>
+  </div>
+  <input type="search" id="wSearch" placeholder="さがす（例：立米、@、勾配）" aria-label="用語をさがす" autocomplete="off">
+  <div class="chips" id="wCats" role="group" aria-label="種類"></div>
+  <div class="wlist" id="wList"></div>
+</section>
+
+</main>
+
+<nav class="tabs" aria-label="メニュー">
+  <div class="tabs-in">
+    <button type="button" data-view="home" aria-current="page"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></span>はじめに</button>
+    <button type="button" data-view="learn" aria-current="false"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg></span>まなぶ</button>
+    <button type="button" data-view="quiz" aria-current="false"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></span>練習</button>
+    <button type="button" data-view="table" aria-current="false"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M10 4v16"/></svg></span>早見表</button>
+    <button type="button" data-view="words" aria-current="false"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg></span>辞典</button>
+  </div>
+</nav>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const store={
+  get(k,d){try{const v=localStorage.getItem('gnote_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('gnote_'+k,JSON.stringify(v));}catch(e){}}
+};
+
+/* ---------- number helpers ---------- */
+function toHalf(s){
+  return String(s).replace(/[０-９．]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[,，\s]/g,'');
+}
+function cleanStr(s){
+  let t=toHalf(s);
+  if(!/^(\d+\.?\d*|\.\d+)$/.test(t))return null;
+  if(t[0]==='.')t='0'+t;
+  if(t.endsWith('.'))t=t.slice(0,-1);
+  return t;
+}
+function parse(s){const t=cleanStr(s);return t===null?NaN:parseFloat(t);}
+function rd(n,d){const p=Math.pow(10,d===undefined?4:d);return Math.round(n*p)/p;}
+function fmt(n,d){if(!isFinite(n))return '—';return rd(n,d===undefined?3:d).toLocaleString('ja-JP',{maximumFractionDigits:d===undefined?3:d});}
+function plain(n,d){if(!isFinite(n))return '—';const v=rd(n,d===undefined?4:d);return v.toLocaleString('en-US',{useGrouping:false,maximumFractionDigits:d===undefined?4:d});}
+function keys(arr){
+  return '<span class="keys">'+arr.map(k=>{const s=String(k);const c=s==='='?'eq':(['×','÷','+','−'].indexOf(s)>-1?'op':'');return '<kbd class="'+c+'">'+s+'</kbd>';}).join('')+'</span>';
+}
+function shiftParts(str,k){
+  const sp=str.split('.');let i=sp[0].replace(/^0+/,'');const f=sp[1]||'';
+  let d=(i+f).split('').map(c=>({c:c,add:false}));
+  let pos=i.length+k;
+  if(pos<1){const n=1-pos;d=Array.from({length:n},()=>({c:'0',add:true})).concat(d);pos=1;}
+  if(pos>d.length){const n=pos-d.length;d=d.concat(Array.from({length:n},()=>({c:'0',add:true})));}
+  return {d:d,pos:pos};
+}
+function partsToStr(p){
+  let ip=p.d.slice(0,p.pos).map(x=>x.c).join('').replace(/^0+(?=\d)/,'');
+  let fp=p.d.slice(p.pos).map(x=>x.c).join('').replace(/0+$/,'');
+  if(ip==='')ip='0';
+  return ip+(fp?'.'+fp:'');
+}
+function shift(str,k){return partsToStr(shiftParts(str,k));}
+function vizParts(p){
+  const m=x=>x.add?'<span class="add">'+x.c+'</span>':x.c;
+  return p.d.slice(0,p.pos).map(m).join('')+'<span class="pt">.</span>'+p.d.slice(p.pos).map(m).join('');
+}
+function vizOrig(str){const sp=str.split('.');return sp[0]+'<span class="pt">.</span>'+(sp[1]||'');}
+function moveText(k){
+  if(k===0)return '同じ単位なので、そのまま';
+  return '点を<b>'+(k>0?'右':'左')+'へ'+Math.abs(k)+'つ</b>（'+(k>0?'×':'÷')+Math.pow(10,Math.abs(k)).toLocaleString('ja-JP')+'）';
+}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const NEED='<p class="muted">数字を入れてね。</p>';
+
+/* ---------- lessons & navigation ---------- */
+const LESSONS=[
+  {id:'unit',no:1,t:'長さの単位 mm・cm・m',s:'お金に置きかえると、かんたん',min:3,q:'unit'},
+  {id:'pct',no:2,t:'パーセント（％）',s:'見分け方は1つだけ。あとは電卓',min:5,q:'pct'},
+  {id:'av',no:3,t:'広さと量 ㎡・㎥',s:'へいべい・りゅうべいって何？',min:4,q:'av'},
+  {id:'height',no:4,t:'高さの数字 切り・盛り',s:'計画高・BM・レベルの読み方',min:5,q:'civil'},
+  {id:'slope',no:5,t:'勾配と法面',s:'％勾配と 1:1.5 の読み方',min:5,q:'slope'},
+  {id:'soil',no:6,t:'土の量とダンプの台数',s:'掘るとふくらむ。L と C',min:5,q:'civil'},
+  {id:'scale',no:7,t:'図面の縮尺 1/100',s:'図面の1cmは、本物の何m？',min:3,q:'slope'}
+];
+const VIEWNAME={home:'はじめに',learn:'まなぶ',quiz:'練習',table:'早見表',words:'辞典'};
+let done=store.get('done',{});
+
+function lessonLink(l){
+  return '<button class="lesson-link" type="button" data-go="'+l.id+'"><span class="no">'+l.no+'</span><span class="txt"><span class="t">'+l.t+'</span><span class="s">'+l.s+'・約'+l.min+'分</span></span>'+(done[l.id]?'<span class="hanko" aria-label="読んだ">済</span>':'<span class="go" aria-hidden="true">›</span>')+'</button>';
+}
+function renderLinks(){
+  const h=LESSONS.map(lessonLink).join('');
+  $('#homePath').innerHTML=h;$('#learnLinks').innerHTML=h;
+}
+function renderDone(){
+  $$('.done-area').forEach(el=>{
+    const id=el.dataset.lesson;const idx=LESSONS.findIndex(l=>l.id===id);const next=LESSONS[idx+1];const L=LESSONS[idx];
+    if(done[id]){
+      el.innerHTML='<div class="done-ok"><span class="hanko lg">済</span><p><b>おつかれさま！</b><br>ハンコを押しました。</p></div>'+
+        '<div class="btn-row"><button class="btn yellow" type="button" data-quiz="'+L.q+'">この内容で練習する</button>'+
+        (next?'<button class="btn ghost" type="button" data-go="'+next.id+'">次：'+next.t+'</button>':'<button class="btn ghost" type="button" data-view="table">早見表を見る</button>')+'</div>';
+    }else{
+      el.innerHTML='<button class="btn" type="button" data-done="'+id+'">読んだ！ハンコを押す</button>';
+    }
+  });
+}
+function renderStats(){
+  const t=store.get('tot',{ok:0,n:0});
+  $('#homeStats').innerHTML=t.n>0?'これまでに <b class="num-font" style="font-size:22px">'+t.ok+'</b> 問 正解（'+t.n+'問 チャレンジ）。続けてえらい。':'まだ練習していません。1問からでOK。';
+}
+let curView='home',curLesson=null;
+function show(view,lesson,noScroll){
+  curView=view;curLesson=lesson||null;
+  Object.keys(VIEWNAME).forEach(v=>{$('#view-'+v).hidden=v!==view;});
+  $$('.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.view===view?'page':'false'));
+  if(view==='learn'){
+    $('#learnList').hidden=!!lesson;
+    $$('.lesson').forEach(l=>{l.hidden=l.id!=='L-'+lesson;});
+  }
+  $('#backBtn').hidden=!(view==='learn'&&lesson);
+  const L=LESSONS.find(l=>l.id===lesson);
+  $('#where').textContent=L&&view==='learn'?'レッスン'+L.no:VIEWNAME[view];
+  if(view==='home')renderStats();
+  if(!noScroll)window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-go]');if(go){show('learn',go.dataset.go);return;}
+  const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return;}
+  const d=e.target.closest('[data-done]');if(d){done[d.dataset.done]=true;store.set('done',done);renderLinks();renderDone();return;}
+  const q=e.target.closest('[data-quiz]');if(q){setCat(q.dataset.quiz);show('quiz');return;}
+});
+$('#backBtn').addEventListener('click',()=>show('learn'));
+
+/* ---------- Lesson 1: unit converter ---------- */
+const EXP={mm:0,cm:1,m:3,km:6};
+function updUnit(){
+  const s=cleanStr($('#uc-in').value);const from=$('#uc-from').value,to=$('#uc-to').value;const out=$('#uc-out');
+  if(s===null){out.innerHTML=NEED;return;}
+  const k=EXP[from]-EXP[to];const p=shiftParts(s,k);const res=partsToStr(p);
+  const hasAdd=p.d.some(x=>x.add);
+  const all=['mm','cm','m'].map(u=>'<span class="chip">'+shift(s,EXP[from]-EXP[u])+' '+u+'</span>').join('<span class="eqs">＝</span>');
+  out.innerHTML='<div class="dviz">'+
+    '<div class="row"><span class="num">'+vizOrig(s)+'</span><span class="un">'+from+'</span></div>'+
+    '<div class="mv">↓ '+moveText(k)+'</div>'+
+    '<div class="row"><span class="num">'+vizParts(p)+'</span><span class="un">'+to+'</span></div></div>'+
+    '<p>答え：<b class="ans">'+res+'</b> <b>'+to+'</b></p>'+
+    (hasAdd?'<p class="small muted">下線の 0 は、場所が足りないので足した 0。</p>':'')+
+    '<div class="stack"><p class="small muted">同じ長さの言いかえ</p><div class="allu">'+all+'</div></div>';
+}
+['#uc-in','#uc-from','#uc-to'].forEach(id=>$(id).addEventListener('input',updUnit));
+
+/* ---------- tape ---------- */
+function tapeSVG(v){
+  const W=340,ppm=5,start=v-30;let s='<svg viewBox="0 0 '+W+' 104" role="img" aria-label="メジャーの目盛り">';
+  s+='<rect x="0" y="8" width="'+W+'" height="72" rx="4" style="fill:var(--tape)"/>';
+  for(let mm=Math.ceil(start-4);mm<=start+70;mm++){
+    const x=20+(mm-start)*ppm;if(x<1||x>W-1)continue;
+    const len=mm%10===0?30:(mm%5===0?20:11);
+    s+='<line x1="'+x+'" y1="8" x2="'+x+'" y2="'+(8+len)+'" style="stroke:var(--tape-ink);stroke-width:'+(mm%10===0?1.8:1)+'"/>';
+    if(mm%10===0){const cm=mm/10;s+='<text x="'+x+'" y="66" text-anchor="middle" font-size="15" style="fill:'+(cm%10===0?'var(--tape-red)':'var(--tape-ink)')+'">'+cm+'</text>';}
+  }
+  const px=20+30*ppm;
+  s+='<line x1="'+px+'" y1="2" x2="'+px+'" y2="88" style="stroke:var(--pencil);stroke-width:3"/>';
+  s+='<polygon points="'+(px-7)+',96 '+(px+7)+',96 '+px+',87" style="fill:var(--pencil)"/>';
+  return s+'</svg>';
+}
+let tapeShown=false;
+function tapeReading(v){
+  const cm=Math.floor(v/10),r=v%10;
+  return (r===0?'ちょうど <b>'+cm+'</b> cm の線':'<b>'+cm+'</b> cm の線から、小さい線 <b>'+r+'</b> 本')+
+    ' → <b class="ans" style="font-size:24px">'+v+'</b> <b>mm</b><br><span class="small muted">'+fmt(v/10,1)+'cm ＝ '+fmt(v/1000)+'m</span>';
+}
+function updTape(){
+  const v=+$('#tp-range').value;$('#tp-fig').innerHTML=tapeSVG(v);
+  const hide=$('#tp-hide').checked&&!tapeShown;
+  $('#tp-read').innerHTML=hide?'<span class="muted">赤い線は何mm？ 考えてから「答えを見る」を押してね。</span>':tapeReading(v);
+  $('#tp-show').hidden=!hide;
+}
+$('#tp-range').addEventListener('input',()=>{tapeShown=false;updTape();});
+$('#tp-hide').addEventListener('change',()=>{tapeShown=false;updTape();});
+$('#tp-show').addEventListener('click',()=>{tapeShown=true;updTape();});
+$('#tp-rand').addEventListener('click',()=>{$('#tp-range').value=1000+Math.floor(Math.random()*1500);tapeShown=false;updTape();});
+
+/* ---------- Lesson 2: percent grid ---------- */
+const pg=$('#pg');for(let i=0;i<100;i++)pg.appendChild(document.createElement('i'));
+const cells=$$('i',pg);
+function updPg(){
+  const p=+$('#pg-range').value;cells.forEach((c,i)=>c.classList.toggle('on',i<p));
+  $('#pg-out').innerHTML='<p class="big"><span class="pc">'+p+'%</span></p>'+
+    '<p>＝ 100マスのうち <b>'+p+'</b> マス</p>'+
+    '<p>＝ '+p+' ÷ 100 ＝ <b>'+plain(p/100)+'</b></p>'+
+    '<p class="small muted">材料が 200本 なら → 200 × '+p+' ÷ 100 ＝ <b>'+fmt(200*p/100)+'本</b></p>';
+}
+$('#pg-range').addEventListener('input',updPg);
+
+/* ---------- percent calculator ---------- */
+let pcMode='A',pcDir='up';
+function segBind(id,attr,cb){
+  $$('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{
+    $$('#'+id+' button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));cb(b.dataset[attr]);
+  }));
+}
+segBind('pc-seg','m',m=>{pcMode=m;['A','B','C'].forEach(x=>{$('#pc-'+x).hidden=x!==m;});updPc();});
+segBind('pcc-seg','d',d=>{pcDir=d;updPc();});
+function bar(pct){return '<div class="bar" aria-hidden="true"><i style="width:'+Math.max(0,Math.min(100,pct))+'%"></i></div>';}
+function updPc(){
+  const out=$('#pc-out');
+  if(pcMode==='A'){
+    const T=parse($('#pa-t').value),P=parse($('#pa-p').value);if(!isFinite(T)||!isFinite(P)){out.innerHTML=NEED;return;}
+    const R=T*P/100;
+    out.innerHTML='<ol class="steps"><li>式にする：<b>'+plain(T)+' × '+plain(P)+' ÷ 100</b></li>'+
+      '<li>電卓でこう押す：<br>'+keys([plain(T),'×',plain(P),'÷',100,'='])+'</li>'+
+      '<li>答え：<b class="ans">'+fmt(R)+'</b></li></ol>'+bar(P)+
+      '<p class="say">「'+fmt(T)+' の '+fmt(P)+'% は '+fmt(R)+'」</p>';
+  }else if(pcMode==='B'){
+    const A=parse($('#pb-a').value),T=parse($('#pb-t').value);if(!isFinite(A)||!isFinite(T)||T===0){out.innerHTML=NEED;return;}
+    const R=A/T*100;
+    out.innerHTML='<ol class="steps"><li>式にする：<b>'+plain(A)+' ÷ '+plain(T)+' × 100</b><br><span class="small muted">割るのは「全体」。</span></li>'+
+      '<li>電卓でこう押す：<br>'+keys([plain(A),'÷',plain(T),'×',100,'='])+'</li>'+
+      '<li>答え：<b class="ans">'+fmt(R,1)+'</b> <b>%</b></li></ol>'+bar(R)+
+      '<p class="say">「'+fmt(A)+' は '+fmt(T)+' の '+fmt(R,1)+'%」</p>'+
+      (Math.abs(R-Math.round(R))>0.001?'<p class="small muted">割り切れないときは、小数点以下1けたくらいで十分。</p>':'');
+  }else{
+    const N=parse($('#pcc-n').value),P=parse($('#pcc-p').value);if(!isFinite(N)||!isFinite(P)){out.innerHTML=NEED;return;}
+    const up=pcDir==='up';const f=up?1+P/100:1-P/100;const add=N*P/100;const R=up?N+add:N-add;
+    out.innerHTML='<ol class="steps"><li>'+fmt(P)+'% '+(up?'増し':'引き')+' は「×'+plain(f)+'」<br><span class="small muted">100% '+(up?'＋':'−')+' '+fmt(P)+'% ＝ '+fmt(up?100+P:100-P)+'% ＝ '+plain(f)+'</span></li>'+
+      '<li>電卓でこう押す：<br>'+keys([plain(N),'×',plain(f),'='])+'</li>'+
+      '<li>答え：<b class="ans">'+fmt(R)+'</b></li></ol>'+
+      '<p class="small">わかりにくければ2回に分けてもOK：<br>① '+fmt(N)+' × '+fmt(P)+' ÷ 100 ＝ '+fmt(add)+'　② '+fmt(N)+' '+(up?'＋':'−')+' '+fmt(add)+' ＝ <b>'+fmt(R)+'</b></p>';
+  }
+}
+['#pa-t','#pa-p','#pb-a','#pb-t','#pcc-n','#pcc-p'].forEach(id=>$(id).addEventListener('input',updPc));
+
+/* ---------- Lesson 3: area / volume ---------- */
+let avMode='area';
+segBind('av-seg','m',m=>{avMode=m;$('#av-cf').hidden=m!=='vol';updAv();});
+function updAv(){
+  const ids=avMode==='area'?['a','b']:['a','b','c'];const names={a:'たて',b:'よこ',c:'厚さ'};const out=$('#av-out');
+  const vals=[];let conv='';
+  for(const k of ids){
+    const s=cleanStr($('#av-'+k).value);if(s===null){out.innerHTML=NEED;return;}
+    const u=$('#av-'+k+'u').value;const m=u==='m'?s:shift(s,-3);vals.push(m);
+    conv+='<br>'+names[k]+'：'+s+u+' → <b>'+m+'m</b>'+(u==='m'?'（そのまま）':'（点を左へ3つ）');
+  }
+  const R=vals.reduce((a,v)=>a*parseFloat(v),1);const unit=avMode==='area'?'㎡':'㎥';
+  let extra='';
+  if(avMode==='area'){extra='<p class="small">坪にすると 約 <b>'+fmt(R/3.3058,1)+' 坪</b>（÷3.3）</p>';}
+  else{extra='<p class="small">生コンなら重さは 約 <b>'+fmt(R*2.3,2)+' t</b>（1㎥ ≒ 2.3t）<br>例えば10%多めに注文するなら 約 <b>'+fmt(R*1.1,2)+' ㎥</b>（×1.1）</p>';}
+  out.innerHTML='<ol class="steps"><li>m にそろえる：'+conv+'</li>'+
+    '<li>かける：<b>'+vals.join(' × ')+'</b></li>'+
+    '<li>電卓でこう押す：<br>'+keys(vals.reduce((a,v,i)=>a.concat(i?['×',v]:[v]),[]).concat(['=']))+'</li>'+
+    '<li>答え：<b class="ans">'+fmt(R,4)+'</b> <b>'+unit+'</b>（'+(avMode==='area'?'へいべい':'りゅうべい')+'）</li></ol>'+extra;
+}
+['#av-a','#av-b','#av-c','#av-au','#av-bu','#av-cu'].forEach(id=>$(id).addEventListener('input',updAv));
+
+/* ---------- Lesson 4: slope ---------- */
+let slMode='h';
+segBind('sl-seg','m',m=>{slMode=m;$('#sl-pf').hidden=m!=='h';$('#sl-hf').hidden=m!=='p';$('#sl-df').hidden=m==='n';$('#sl-Hf').hidden=m!=='n';$('#sl-nf').hidden=m!=='n';updSl();});
+function noriSVG(hTxt,wTxt,nTxt,n){
+  const w=Math.max(30,Math.min(240,100*n));const tx=60+w;
+  return '<svg viewBox="0 0 340 170" role="img" aria-label="法面の図">'+
+    '<polygon points="20,30 60,30 '+tx+',130 20,130" style="fill:var(--mark-soft)"/>'+
+    '<line x1="20" y1="30" x2="60" y2="30" class="s-line"/>'+
+    '<line x1="60" y1="30" x2="'+tx+'" y2="130" class="s-line"/>'+
+    '<line x1="10" y1="130" x2="330" y2="130" class="s-dash"/>'+
+    '<line x1="60" y1="30" x2="60" y2="130" class="s-red"/>'+
+    '<line x1="60" y1="144" x2="'+tx+'" y2="144" class="s-red"/>'+
+    '<line x1="60" y1="138" x2="60" y2="150" class="s-red"/><line x1="'+tx+'" y1="138" x2="'+tx+'" y2="150" class="s-red"/>'+
+    '<text x="54" y="84" text-anchor="end" font-size="13" class="t-red">高さ</text>'+
+    '<text x="54" y="100" text-anchor="end" font-size="13" class="t-red">'+hTxt+'</text>'+
+    '<text x="'+(60+w/2)+'" y="164" text-anchor="middle" font-size="13" class="t-red">横幅 '+wTxt+'</text>'+
+    '<text x="'+(60+w/2+10)+'" y="76" font-size="14" class="s-ink">'+nTxt+'</text>'+
+    '<text x="60" y="22" text-anchor="middle" font-size="11" class="s-soft">法肩</text>'+
+    '<text x="'+(tx+6)+'" y="122" font-size="11" class="s-soft">法尻</text>'+
+  '</svg><figcaption>盛土の断面。形はわかりやすいように描いています。</figcaption>';
+}
+function slopeSVG(dTxt,hTxt,pTxt){
+  return '<svg viewBox="0 0 340 150" role="img" aria-label="勾配の図">'+
+    '<polygon points="20,40 270,100 270,140 20,140" style="fill:var(--mark-soft)"/>'+
+    '<line x1="20" y1="40" x2="300" y2="40" class="s-dash"/>'+
+    '<line x1="20" y1="40" x2="270" y2="100" class="s-line"/>'+
+    '<line x1="270" y1="40" x2="270" y2="100" class="s-red"/>'+
+    '<text x="145" y="30" text-anchor="middle" font-size="14" class="s-ink">水平に '+dTxt+'</text>'+
+    '<text x="278" y="68" font-size="13" class="t-red">'+hTxt+'</text>'+
+    '<text x="278" y="84" font-size="11" class="s-soft">下がる</text>'+
+    '<text x="105" y="104" text-anchor="middle" font-size="15" class="s-ink">'+pTxt+'</text>'+
+    '<text x="105" y="124" text-anchor="middle" font-size="11" class="s-soft">水はこっちへ流れる →</text>'+
+  '</svg><figcaption>わかりやすいように、かたむきを大げさに描いています。</figcaption>';
+}
+function updSl(){
+  const out=$('#sl-out');
+  if(slMode==='n'){
+    const H=parse($('#sl-H').value),n=parse($('#sl-n').value);if(!isFinite(H)||!isFinite(n)){out.innerHTML=NEED;return;}
+    const W=H*n,Lg=H*Math.sqrt(1+n*n);
+    out.innerHTML='<ol class="steps"><li>式にする：<b>'+plain(H)+' × '+plain(n)+'</b>（高さ × 右の数字）</li>'+
+      '<li>電卓でこう押す：<br>'+keys([plain(H),'×',plain(n),'='])+'</li>'+
+      '<li>答え：横幅 <b class="ans">'+fmt(W,3)+'</b> <b>m</b></li></ol>'+
+      '<p class="say">「高さ '+fmt(H)+'m で 1:'+plain(n)+' の法面は、横に '+fmt(W,3)+'m 広がる」</p>'+
+      '<p class="small muted">斜めの長さ（法長 のりなが）は 約 '+fmt(Lg,2)+'m。</p>';
+    $('#sl-fig').innerHTML=noriSVG(fmt(H)+'m',fmt(W,3)+'m','1 : '+plain(n),n);
+    return;
+  }
+  const ds=cleanStr($('#sl-d').value);if(ds===null||parseFloat(ds)===0){out.innerHTML=NEED;return;}
+  const D=shift(ds,3);const Dn=parseFloat(D);
+  if(slMode==='h'){
+    const P=parse($('#sl-p').value);if(!isFinite(P)){out.innerHTML=NEED;return;}
+    const H=Dn*P/100;
+    out.innerHTML='<ol class="steps"><li>きょりを mm に：'+ds+'m → <b>'+D+'mm</b>（点を右へ3つ）</li>'+
+      '<li>式にする：<b>'+D+' × '+plain(P)+' ÷ 100</b></li>'+
+      '<li>電卓でこう押す：<br>'+keys([D,'×',plain(P),'÷',100,'='])+'</li>'+
+      '<li>答え：<b class="ans">'+fmt(H,1)+'</b> <b>mm</b></li></ol>'+
+      '<p class="say">「'+ds+'m 進むと '+fmt(H,1)+'mm 下がる」</p>'+
+      '<p class="small muted">近道：'+ds+' × '+plain(P)+' × 10 ＝ '+fmt(H,1)+'</p>';
+    $('#sl-fig').innerHTML=slopeSVG(ds+'m',fmt(H,1)+'mm',plain(P)+'% 勾配');
+  }else{
+    const H=parse($('#sl-h').value);if(!isFinite(H)){out.innerHTML=NEED;return;}
+    const P=H/Dn*100;
+    out.innerHTML='<ol class="steps"><li>きょりを mm に：'+ds+'m → <b>'+D+'mm</b>（点を右へ3つ）</li>'+
+      '<li>式にする：<b>'+plain(H)+' ÷ '+D+' × 100</b><br><span class="small muted">「何%？」なのでレッスン2の型Bと同じ。</span></li>'+
+      '<li>電卓でこう押す：<br>'+keys([plain(H),'÷',D,'×',100,'='])+'</li>'+
+      '<li>答え：<b class="ans">'+fmt(P,2)+'</b> <b>%</b></li></ol>'+
+      '<p class="say">「'+fmt(P,2)+'% 勾配」</p>';
+    $('#sl-fig').innerHTML=slopeSVG(ds+'m',plain(H)+'mm',fmt(P,2)+'% 勾配');
+  }
+}
+['#sl-d','#sl-p','#sl-h','#sl-H','#sl-n'].forEach(id=>$(id).addEventListener('input',updSl));
+
+/* ---------- Lesson 5: scale ---------- */
+function updSc(){
+  const out=$('#sc-out');const S=+$('#sc-s').value;const M=parse($('#sc-m').value);if(!isFinite(M)){out.innerHTML=NEED;return;}
+  const R=M*S;
+  out.innerHTML='<ol class="steps"><li>測った長さ × 分母：<b>'+plain(M)+' × '+S+'</b></li>'+
+    '<li>電卓でこう押す：<br>'+keys([plain(M),'×',S,'='])+'</li>'+
+    '<li>答え：<b class="ans">'+fmt(R)+'</b> <b>mm</b> ＝ <b>'+fmt(R/1000)+' m</b></li></ol>'+
+    '<p class="say">「1/'+S+' の図面で '+fmt(M)+'mm は、本物の '+fmt(R/1000)+'m」</p>';
+}
+['#sc-s','#sc-m'].forEach(id=>$(id).addEventListener('input',updSc));
+
+/* ---------- Lesson 4: cut & fill, level ---------- */
+function sgnF(n,d){return (n>0?'+':n<0?'−':'')+Math.abs(n).toFixed(d);}
+function updCf(){
+  const out=$('#cf-out');const P=parse($('#cf-p').value),N=parse($('#cf-n').value);if(!isFinite(P)||!isFinite(N)){out.innerHTML=NEED;return;}
+  const d=rd(P-N,4);const mm=Math.round(d*1000);
+  let verdict;
+  if(mm>0)verdict='<b class="ans" style="color:var(--ok)">盛り '+fmt(mm)+'</b> <b>mm</b><p class="say">「'+fmt(mm)+'mm 土を盛る」</p>';
+  else if(mm<0)verdict='<b class="ans">切り '+fmt(-mm)+'</b> <b>mm</b><p class="say">「'+fmt(-mm)+'mm 掘る（切る）」</p>';
+  else verdict='<b class="ans">±0</b><p class="say">「ちょうど計画の高さ。そのままでOK」</p>';
+  out.innerHTML='<ol class="steps"><li>引き算：<b>'+P.toFixed(3)+' − '+N.toFixed(3)+' ＝ '+sgnF(d,3)+'</b> m</li>'+
+    '<li>電卓でこう押す：<br>'+keys([P.toFixed(3),'−',N.toFixed(3),'='])+'</li>'+
+    '<li>mm にする（点を右へ3つ）：<b>'+sgnF(mm,0)+' mm</b></li>'+
+    '<li>'+(mm>0?'＋なので <b>盛り</b>':mm<0?'−（マイナス）なので <b>切り</b>':'0 なので そのまま')+'</li></ol>'+
+    '<div>'+verdict+'</div>'+
+    '<p class="small muted">電卓に「−」が出たら、「掘る」と読めばOK。</p>';
+}
+['#cf-p','#cf-n'].forEach(id=>$(id).addEventListener('input',updCf));
+function updLv(){
+  const out=$('#lv-out');const B=parse($('#lv-bm').value),S=parse($('#lv-bs').value),F=parse($('#lv-fs').value);
+  if(![B,S,F].every(isFinite)){out.innerHTML=NEED;return;}
+  const IH=rd(B+S,4),G=rd(IH-F,4),diff=Math.round(rd(S-F,4)*1000);
+  out.innerHTML='<ol class="steps"><li>器械高（目線の高さ）：<b>'+B.toFixed(3)+' ＋ '+S.toFixed(3)+' ＝ '+IH.toFixed(3)+'</b></li>'+
+    '<li>その点の高さ：<b>'+IH.toFixed(3)+' − '+F.toFixed(3)+'</b></li>'+
+    '<li>電卓でこう押す：<br>'+keys([B.toFixed(3),'+',S.toFixed(3),'−',F.toFixed(3),'='])+'</li>'+
+    '<li>答え：<b class="ans">'+G.toFixed(3)+'</b> <b>m</b></li></ol>'+
+    '<p class="say">'+(diff>0?'前視のほうが小さい → BM より '+fmt(diff)+'mm 高い':diff<0?'前視のほうが大きい → BM より '+fmt(-diff)+'mm 低い':'BM と同じ高さ')+'</p>';
+}
+['#lv-bm','#lv-bs','#lv-fs'].forEach(id=>$(id).addEventListener('input',updLv));
+
+/* ---------- Lesson 6: soil & dump ---------- */
+let soMode='dig';
+segBind('so-seg','m',m=>{soMode=m;$('#so-cf').hidden=m!=='fill';$('#so-vl').textContent=m==='dig'?'掘る量（地山）':'盛りたい量（固めた後）';updSo();});
+function updSo(){
+  const out=$('#so-out');const V=parse($('#so-v').value),L=parse($('#so-l').value),T=parse($('#so-t').value),C=parse($('#so-c').value);
+  if(![V,L,T].every(isFinite)||T===0||(soMode==='fill'&&(!isFinite(C)||C===0))){out.innerHTML=NEED;return;}
+  let html='<ol class="steps">',loose,k;
+  if(soMode==='dig'){
+    loose=V*L;
+    html+='<li>ほぐした量：<b>'+plain(V)+' × '+plain(L)+' ＝ '+fmt(loose,2)+' ㎥</b><br><span class="small muted">掘るとふくらむので L をかける。</span></li>';
+    k=[plain(V),'×',plain(L),'÷',plain(T),'='];
+  }else{
+    const nat=V/C;loose=nat*L;
+    html+='<li>必要な地山：<b>'+plain(V)+' ÷ '+plain(C)+' ＝ '+fmt(nat,2)+' ㎥</b><br><span class="small muted">固めるとへるので、その分多めに用意する。C で割る。</span></li>'+
+      '<li>運ぶときの量（ほぐし）：<b>'+fmt(nat,2)+' × '+plain(L)+' ＝ '+fmt(loose,2)+' ㎥</b></li>';
+    k=[plain(V),'÷',plain(C),'×',plain(L),'÷',plain(T),'='];
+  }
+  const raw=loose/T,n=Math.ceil(rd(raw,6)),exact=Math.abs(raw-Math.round(raw))<1e-6;
+  html+='<li>台数：<b>'+fmt(loose,2)+' ÷ '+plain(T)+' ＝ '+fmt(raw,2)+' 台</b></li>'+
+    '<li>'+(exact?'ちょうど割り切れた':'小数が出たので<b>切り上げ</b>')+' → <b class="ans">'+n+'</b> <b>台</b></li></ol>'+
+    '<p class="small"><b>電卓で一気にやるなら</b><br>'+keys(k)+'</p>';
+  out.innerHTML=html;
+}
+['#so-v','#so-l','#so-t','#so-c'].forEach(id=>$(id).addEventListener('input',updSo));
+
+/* ---------- words ---------- */
+const WORDS=[
+ {c:'長さ',s:'mm',y:'ミリ',o:'1mの1000分の1の長さ',w:'建物は数mmズレるだけで部材が合わなくなる。いちばん細かい mm なら小数点なしで書けて、読みまちがいも減る。',e:'図面の「910」は 910mm（91cm）。単位がない数字は、まず mm と思ってOK。'},
+ {c:'長さ',s:'cm',y:'センチ',o:'1mの100分の1の長さ',w:'会話ではよく使うけど、図面にはほとんど出てこない。「あと5センチ」と言われたら 50mm のこと。',e:'メジャーの大きい数字は cm。123cm ＝ 1230mm。'},
+ {c:'長さ',s:'m',y:'メートル',o:'長さの基本の単位',w:'道路の長さや土地の広さなど、大きいものは m で表す。土木の図面では m で書いた数字もよく出る。',e:'延長 120m、高さ 12.500（m）など。'},
+ {c:'長さ',s:'km',y:'キロ',o:'1000mの長さ',w:'道路工事の場所や、現場までのきょりで使う。',e:'1.2km ＝ 1200m。'},
+ {c:'長さ',s:'尺・寸',y:'しゃく・すん',o:'昔からの長さ。1尺は約303mm',w:'木造の家は今でも尺の寸法で作ることが多い。だから図面に 303、455、910 などの数字がよく出る。',e:'1寸 ≒ 30mm、1尺 ≒ 303mm、3尺 ≒ 910mm。'},
+ {c:'長さ',s:'間',y:'けん',o:'6尺。約1820mm',w:'柱と柱の間隔の基本。合板（サブロク板）の長い辺もこの長さ。',e:'1間 ≒ 1820mm、半間 ≒ 910mm。'},
+ {c:'広さ・量',s:'㎡',y:'へいべい（平米）',o:'広さの単位。1m×1mの広さ',w:'床・壁・舗装・型枠など「張る・塗る・敷く」ものは広さで数えて、材料や手間を決める。',e:'たて3m × よこ4m ＝ 12㎡（12へいべい）。'},
+ {c:'広さ・量',s:'㎥',y:'りゅうべい（立米）',o:'量の単位。1m×1m×1m',w:'生コン・土・砂利など「流す・掘る・運ぶ」ものは量で注文したり運んだりする。',e:'生コン 3立米 ＝ 3㎥。1㎥ ＝ 1000L。'},
+ {c:'広さ・量',s:'坪',y:'つぼ',o:'広さの単位。約3.3㎡',w:'日本で昔から使う広さ。土地や家の広さで今もよく使う。',e:'1坪 ≒ 畳2枚分。30坪 ≒ 99㎡。'},
+ {c:'広さ・量',s:'L',y:'リットル',o:'水などの量。1㎥は1000L',w:'水や塗料、燃料など、小さめの量で使う。',e:'1㎥ ＝ 1000L。500mLのペットボトル2本で 1L。'},
+ {c:'重さ・力',s:'t',y:'トン',o:'1000kgの重さ',w:'ダンプやクレーンなど、重いものを運ぶ・吊るときの基本の単位。',e:'生コン 1㎥ ≒ 2.3t。「4tダンプ」は4トンクラスのダンプ。'},
+ {c:'重さ・力',s:'kN',y:'キロニュートン',o:'力の単位。1kNは約100kg分',w:'設計では「重さ」ではなく「どれだけの力がかかるか」で考えるので、この単位を使う。',e:'10kN ≒ 約1トン分の力。'},
+ {c:'重さ・力',s:'N/mm²',y:'ニュートン毎平方ミリ',o:'コンクリートの強さの単位',w:'生コンの注文で「呼び強度」として出てくる。数字が大きいほど強いコンクリート。',e:'呼び強度 24 ＝ 24N/mm²。'},
+ {c:'勾配',s:'％勾配',y:'パーセントこうばい',o:'100進んで何下がるか',w:'道路や駐車場、排水は少しかたむけないと水がたまる。そのかたむきを％で表す。',e:'2% ＝ 1m 進んで 20mm 下がる。'},
+ {c:'勾配',s:'寸勾配',y:'すんこうばい',o:'屋根のかたむき。10進んで何上がるか',w:'屋根は昔から尺・寸で考えるので、かたむきも寸で表す。',e:'4寸勾配 ＝ 横に10進んで 4上がる。'},
+ {c:'勾配',s:'1:1.5',y:'のりこうばい（1割5分）',o:'土の斜面のかたむき',w:'土が崩れないように、斜面（法面）のかたむきを決める。数字が大きいほど、ゆるやか。',e:'1:1.5 ＝ 高さ1m に対して横に1.5m。'},
+ {c:'勾配',s:'割・分',y:'わり・ぶ',o:'1割は10%、1分は1%',w:'％の昔からの言い方。現場では「1割増し」のように今もよく使う。',e:'1割増し ＝ 10%増し ＝ ×1.1。長さの「分（ぶ）」とは別もの。'},
+ {c:'図面の記号',s:'@',y:'ピッチ（アット）',o:'同じものを並べる間隔',w:'鉄筋や柱、ボルトなど、同じものを等しい間隔で並べるときに使う。',e:'@200 ＝ 200mmおき。D13@200 ＝ D13の鉄筋を200mmおき。'},
+ {c:'図面の記号',s:'φ',y:'ファイ（パイ）',o:'丸いものの直径',w:'パイプや穴など、丸いものの太さを表す。',e:'φ100 ＝ 直径100mmの丸。'},
+ {c:'図面の記号',s:'D',y:'ディー',o:'鉄筋の太さ',w:'表面にデコボコのある鉄筋（異形鉄筋）の太さを短く書くため。',e:'D13 ＝ 太さ約13mmの鉄筋。D10、D13、D16 がよく出る。'},
+ {c:'図面の記号',s:'t',y:'ティー（厚さ）',o:'板などの厚さ',w:'板やコンクリートの厚みを短く書くため。重さのトン（t）とまちがえやすいので注意。',e:'t=12 ＝ 厚さ12mm。'},
+ {c:'図面の記号',s:'R',y:'アール',o:'カーブの半径',w:'角の丸みやカーブの大きさを表す。',e:'R500 ＝ 半径500mmのカーブ。'},
+ {c:'図面の記号',s:'GL',y:'ジーエル',o:'地面の高さ（高さの基準）',w:'高さを決めるときの「0」の位置。ここから上か下かで高さを表す。',e:'GL−500 ＝ 地面から500mm下。'},
+ {c:'図面の記号',s:'FL',y:'エフエル',o:'床の高さ',w:'床の仕上がりの高さの基準。',e:'1FL ＝ 1階の床の高さ。'},
+ {c:'図面の記号',s:'1/100',y:'しゅくしゃく（縮尺）',o:'本物を何分の1で描いたか',w:'大きな建物を紙に描くために縮めている。',e:'1/100 なら 図面の1cm ＝ 本物の1m。'},
+ {c:'図面の記号',s:'±',y:'プラスマイナス',o:'ここまでならズレてOKの幅',w:'ぴったり0mmは無理なので、許されるズレを決めておく。',e:'±10 ＝ 10mm 大きくても小さくてもOK。'},
+ {c:'現場の言葉',s:'天端',y:'てんば',o:'いちばん上の面',w:'コンクリートや基礎の「上の面の高さ」を言うときに使う。',e:'天端 GL+400 ＝ 上の面が地面から400mm上。'},
+ {c:'現場の言葉',s:'芯々',y:'しんしん',o:'中心から中心までの長さ',w:'柱や壁の位置は、中心どうしで測るのが基本。',e:'柱の芯々 1820 ＝ 柱の真ん中どうしが 1820mm。'},
+ {c:'現場の言葉',s:'内法',y:'うちのり',o:'内側から内側までの長さ',w:'実際に物が入るスペースを知りたいときに使う。芯々とまちがえると寸法がズレる。',e:'窓の内法 ＝ 窓わくの内側どうしの長さ。'},
+ {c:'現場の言葉',s:'通り芯',y:'とおりしん',o:'図面の基準になる線',w:'すべての位置はこの線から測る。X1、Y1 のように名前がついている。',e:'「X2通りから 300」＝ X2の線から300mm。'},
+ {c:'現場の言葉',s:'墨出し',y:'すみだし',o:'基準の線を床や壁に引く作業',w:'図面の位置を現場に写すための作業。ここがズレると全部ズレる。',e:'「墨を出す」＝ 線を引く。'},
+ {c:'現場の言葉',s:'レベル',y:'レベル',o:'高さ、または高さを測る機械',w:'水平や高さをそろえるときに使う言葉。',e:'「レベルを見る」＝ 高さを測る。'},
+ {c:'現場の言葉',s:'人工',y:'にんく',o:'1人が1日はたらく量',w:'作業にどれだけの人と日数がかかるかを数えるための単位。',e:'3人工 ＝ 3人で1日、または1人で3日。'},
+ {c:'土木',s:'測点 No.',y:'そくてん ナンバー',o:'道路などの位置。ふつう20mごと',w:'長い道路工事で「どこの話か」を伝えるための住所のようなもの。',e:'No.5+10 ＝ 5×20m＋10m ＝ 110m地点。'},
+ {c:'現場の言葉',s:'スランプ',y:'スランプ',o:'生コンのやわらかさ（cm）',w:'生コンの注文で指定する。数字が大きいほど、やわらかい。',e:'スランプ 8cm、18cm など。'},
+ {c:'現場の言葉',s:'割増・ロス',y:'わりまし・ロス',o:'材料を少し多めに見ておくこと',w:'切れ端やこぼれる分があるので、ぴったりの量だと足りなくなる。',e:'10%割増 ＝ 必要な数 × 1.1。'},
+ {c:'土木',s:'切土',y:'きりど',o:'地面を掘って低くすること',w:'計画の高さより高いところを削って、図面の高さに合わせる。',e:'「ここは 150 切り」＝ 150mm 掘り下げる。'},
+ {c:'土木',s:'盛土',y:'もりど',o:'土を盛って高くすること',w:'計画の高さより低いところに土を足して、締め固める。',e:'「ここは 200 盛り」＝ 200mm 土を足す。'},
+ {c:'土木',s:'法面',y:'のりめん',o:'切土や盛土でできる斜面',w:'土がくずれないように、決まったかたむきで作る。',e:'上の角が法肩（のりかた）、下の角が法尻（のりじり）。'},
+ {c:'土木',s:'丁張り',y:'ちょうはり',o:'高さや形の目印に立てる木の枠',w:'掘る深さや盛る高さ、法面の形を現場で見えるようにするため。',e:'「丁張りを見て掘る」＝ 目印の高さに合わせて掘る。'},
+ {c:'土木',s:'BM',y:'ベンチマーク',o:'高さを測るときの基準の点',w:'すべての高さはこの点から測る。動かないものに印をつけてある。',e:'「BM から測って 12.350」。'},
+ {c:'土木',s:'T.P.',y:'ティーピー',o:'海の高さを0にした標高',w:'東京湾の平均の海面を0として、日本全国の高さを表す。',e:'T.P.+12.500 ＝ 海から 12.5m の高さ。'},
+ {c:'土木',s:'計画高',y:'けいかくだか',o:'図面に書いてある仕上がりの高さ',w:'この高さに合わせて、掘ったり盛ったりする。FH と書くこともある。',e:'計画高 − いまの高さ ＝ 切り・盛り。'},
+ {c:'土木',s:'地盤高',y:'じばんだか',o:'いまの地面の高さ',w:'計画高とくらべて、掘るか盛るかを決める。GH と書くこともある。',e:'工事の前に、いまの地盤高を測っておく。'},
+ {c:'土木',s:'スタッフ',y:'箱尺（はこじゃく）',o:'高さを測る目盛りつきの長い棒',w:'レベルでのぞいて、この棒の数字を読んで高さを出す。',e:'スタッフの数字が大きいほど、地面は低い。'},
+ {c:'土木',s:'後視・前視',y:'こうし・ぜんし',o:'レベルで読む2つの数字',w:'BM で読むのが後視、測りたい点で読むのが前視。この差で高さがわかる。',e:'その点の高さ ＝ BM ＋ 後視 − 前視。'},
+ {c:'土木',s:'地山',y:'じやま',o:'掘る前の自然のままの土',w:'掘るとふくらみ、固めるとへるので、土の量はこの状態を基準に考えることが多い。',e:'地山 10㎥ を掘ると、ほぐして約12㎥ に（L＝1.2 の場合）。'},
+ {c:'土木',s:'L・C',y:'どりょうへんかりつ',o:'土がふくらむ・へる割合',w:'掘った土は増え、固めた土はへる。運ぶ量や必要な量を計算するのに使う。',e:'L＝1.2 は 1.2倍にふくらむ。C＝0.9 は 9割にへる。'},
+ {c:'土木',s:'床掘り',y:'とこぼり',o:'構造物を入れるために掘ること',w:'側溝やます、基礎などを入れる場所を掘る。',e:'「床掘り 深さ 600」。'},
+ {c:'土木',s:'埋戻し',y:'うめもどし',o:'掘ったところに土を戻すこと',w:'構造物を入れたあと、まわりのすき間を土で埋める。',e:'少しずつ入れて、転圧しながら戻す。'},
+ {c:'土木',s:'転圧',y:'てんあつ',o:'土や砕石を機械で押し固めること',w:'固めないと、あとで沈んで地面や道路がへこむ。',e:'ランマーやローラーで転圧する。'},
+ {c:'土木',s:'RC-40',y:'アールシー40',o:'再生砕石。0〜40mmの石がまざったもの',w:'道路や構造物の下に敷いて、地面を強くする。',e:'「RC-40 を厚さ150で敷いて転圧」。'},
+ {c:'土木',s:'CL',y:'センターライン',o:'道路の中心線',w:'道路の位置や幅は、この線を基準に決める。',e:'「CL から左に 3.0m」。'},
+ {c:'土木',s:'幅員',y:'ふくいん',o:'道路の幅',w:'道路の大きさを表す基本の数字。',e:'幅員 6.0m の道路。'},
+ {c:'土木',s:'延長',y:'えんちょう',o:'道路や側溝などの長さ',w:'工事の長さや材料の量を出すのに使う。図面では L= と書く。',e:'L=120.0m ＝ 長さ120m。'},
+ {c:'土木',s:'横断図・縦断図',y:'おうだんず・じゅうだんず',o:'道路を横に切った図と、縦に切った図',w:'横断図は道路の幅の向きの形、縦断図は進む向きの高さの変化がわかる。',e:'横断勾配 2% は横断図で見る。'}
+];
+const WCATS=['ぜんぶ','土木','長さ','広さ・量','重さ・力','勾配','図面の記号','現場の言葉'];
+let wCat='ぜんぶ';
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+$('#wCats').innerHTML=WCATS.map(c=>'<button type="button" data-wc="'+c+'" aria-pressed="'+(c===wCat)+'">'+c+'</button>').join('');
+$('#wCats').addEventListener('click',e=>{const b=e.target.closest('[data-wc]');if(!b)return;wCat=b.dataset.wc;$$('#wCats button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));renderWords();});
+function renderWords(){
+  const q=toHalf($('#wSearch').value).toLowerCase();
+  const list=WORDS.filter(w=>(wCat==='ぜんぶ'||w.c===wCat)&&(!q||(w.s+w.y+w.o+w.w+w.e+w.c).toLowerCase().indexOf(q)>-1));
+  $('#wList').innerHTML=list.length?list.map(w=>'<details class="word"><summary><span class="sym">'+esc(w.s)+'</span><span><span class="yomi">'+esc(w.y)+'</span><span class="one">'+esc(w.o)+'</span></span><span class="plus" aria-hidden="true">＋</span></summary>'+
+    '<div class="body"><p class="cat">'+esc(w.c)+'</p><div><h4>なぜ現場で使う？</h4><p>'+esc(w.w)+'</p></div><div><h4>例</h4><p>'+esc(w.e)+'</p></div></div></details>').join('')
+    :'<p class="empty">見つかりませんでした。ちがう言葉でさがしてみてね。</p>';
+}
+$('#wSearch').addEventListener('input',renderWords);
+
+/* ---------- table jump ---------- */
+$('#tJump').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;const el=document.getElementById(b.dataset.t);if(el)el.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
+
+/* ---------- quiz ---------- */
+const QCATS={all:'ぜんぶ',civil:'土木',unit:'長さの単位',pct:'パーセント',av:'広さ・量',slope:'勾配・縮尺',word:'用語'};
+function intPick(fn){for(let i=0;i<60;i++){const r=fn();if(r)return r;}return fn(true);}
+function qUnit(){
+  const t=pick(['mm2m','m2mm','cm2mm','mm2cm','mm2m']);
+  if(t==='mm2m'){const v=pick([450,910,1200,1820,2500,3640,50,300,1250,6000,75]);const a=v/1000;
+    return {q:v+' mm は 何 m？',c:fmt(a,4)+' m',w:[fmt(v/100,4)+' m',fmt(v/10,4)+' m',fmt(v/10000,4)+' m',fmt(v*10,4)+' m'],h:'mm → m は「÷1000」。点を左へ3つ。',x:'mm → m は ÷1000（点を左へ3つ）。<br>'+v+' ÷ 1000 ＝ <b>'+fmt(a,4)+' m</b>',k:[v,'÷',1000,'=']};}
+  if(t==='m2mm'){const v=pick([1.5,2.4,3.64,0.9,12,0.45,1.82,2.73]);const a=v*1000;
+    return {q:v+' m は 何 mm？',c:fmt(a)+' mm',w:[fmt(v*100)+' mm',fmt(v*10)+' mm',fmt(v*10000)+' mm'],h:'m → mm は「×1000」。点を右へ3つ。',x:'m → mm は ×1000（点を右へ3つ、足りなければ0を足す）。<br>'+v+' × 1000 ＝ <b>'+fmt(a)+' mm</b>',k:[v,'×',1000,'=']};}
+  if(t==='cm2mm'){const v=pick([5,12,45,90,123,150,7.5]);const a=v*10;
+    return {q:v+' cm は 何 mm？',c:fmt(a)+' mm',w:[fmt(v*100)+' mm',fmt(v/10,3)+' mm',fmt(v*1000)+' mm'],h:'cm → mm は「×10」。点を右へ1つ。',x:'cm → mm は ×10（点を右へ1つ）。<br>'+v+' × 10 ＝ <b>'+fmt(a)+' mm</b>',k:[v,'×',10,'=']};}
+  const v=pick([50,120,455,910,1820,35,600]);const a=v/10;
+  return {q:v+' mm は 何 cm？',c:fmt(a,3)+' cm',w:[fmt(v/100,3)+' cm',fmt(v*10)+' cm',fmt(v/1000,4)+' cm'],h:'mm → cm は「÷10」。点を左へ1つ。',x:'mm → cm は ÷10（点を左へ1つ）。<br>'+v+' ÷ 10 ＝ <b>'+fmt(a,3)+' cm</b>',k:[v,'÷',10,'=']};
+}
+function qPctA(){
+  return intPick(()=>{const T=pick([200,250,300,400,500,600,800,1000,1200,1500,2000]),P=pick([5,10,15,20,25,30,40,50,75]);const R=T*P/100;if(!Number.isInteger(R))return null;
+    const ctx=pick([['材料 '+T+'本 の '+P+'% は 何本？','本'],[T+'m の工事の '+P+'% は 何m？','m'],[T+'kg の '+P+'% は 何kg？','kg']]);const u=ctx[1];
+    return {q:ctx[0],c:fmt(R)+u,w:[fmt(T*P/10)+u,fmt(T-R)+u,fmt(R/10,2)+u,fmt(R+P)+u],h:'％がわかっている → 型A「全体 × ％ ÷ 100」',x:'％がわかっているので型A。<br>'+T+' × '+P+' ÷ 100 ＝ <b>'+fmt(R)+u+'</b>',k:[T,'×',P,'÷',100,'=']};});
+}
+function qPctB(){
+  return intPick(()=>{const T=pick([200,400,500,800,1000,1200,250]),P=pick([10,20,25,40,50,60,75,80]);const A=T*P/100;if(!Number.isInteger(A))return null;
+    const q=pick(['全部で '+T+'m。いま '+A+'m 終わった。何% 進んだ？','材料 '+T+'本 のうち '+A+'本 使った。何%？']);
+    return {q:q,c:P+'%',w:[fmt(A/T,4)+'%',fmt(T/A*100,1)+'%',(100-P)+'%',(P*10)+'%'],h:'％を知りたい → 型B「部分 ÷ 全体 × 100」',x:'％を知りたいので型B。割るのは「全体」。<br>'+A+' ÷ '+T+' × 100 ＝ <b>'+P+'%</b>',k:[A,'÷',T,'×',100,'=']};});
+}
+function qPctC(){
+  return intPick(()=>{const up=Math.random()<.6;const N=pick([200,300,400,500,120,80,250,1000,600]),P=pick(up?[10,5,20]:[10,20,30]);const f=up?1+P/100:1-P/100;const R=rd(N*f,6);if(!Number.isInteger(R))return null;
+    if(up)return {q:'材料が '+N+'本 必要。'+P+'% 多めに注文するなら 何本？',c:fmt(R)+'本',w:[fmt(N+P)+'本',fmt(N*P/100)+'本',fmt(N*(1-P/100))+'本',fmt(N*(1+P/10))+'本'],h:P+'%増しは「×'+plain(f)+'」',x:P+'%増し ＝ 100%＋'+P+'% ＝ ×'+plain(f)+'。<br>'+N+' × '+plain(f)+' ＝ <b>'+fmt(R)+'本</b>',k:[N,'×',plain(f),'=']};
+    return {q:N+'円 の品物が '+P+'%引き。いくら？',c:fmt(R)+'円',w:[fmt(N-P)+'円',fmt(N*P/100)+'円',fmt(N*(1+P/100))+'円'],h:P+'%引きは「×'+plain(f)+'」',x:P+'%引き ＝ 100%−'+P+'% ＝ ×'+plain(f)+'。<br>'+N+' × '+plain(f)+' ＝ <b>'+fmt(R)+'円</b>',k:[N,'×',plain(f),'=']};});
+}
+function qArea(){
+  const a=pick([2000,2500,3000,3600,4000,5000,1800]),b=pick([1500,2000,2700,3000,900]);const R=a*b/1e6;
+  return {q:'たて '+a+'mm、よこ '+b+'mm の床。広さは 何 ㎡？',c:fmt(R,4)+' ㎡',w:[fmt(R*10,4)+' ㎡',fmt(R/10,4)+' ㎡',fmt(R*100,4)+' ㎡',(a*b).toLocaleString('ja-JP')+' ㎡'],h:'先に m にそろえてから、かける',x:'先に m に：'+a+'mm → '+plain(a/1000)+'m、'+b+'mm → '+plain(b/1000)+'m<br>'+plain(a/1000)+' × '+plain(b/1000)+' ＝ <b>'+fmt(R,4)+' ㎡</b>',k:[plain(a/1000),'×',plain(b/1000),'=']};
+}
+function qVol(){
+  const L=pick([3,4,5,6,8,10]),W=pick([2,2.5,3,4,5]),t=pick([100,120,150,200]);const R=L*W*t/1000;
+  return {q:'たて '+L+'m、よこ '+W+'m、厚さ '+t+'mm のコンクリート。量は 何 ㎥？',c:fmt(R,4)+' ㎥',w:[fmt(L*W*t,4)+' ㎥',fmt(R*10,4)+' ㎥',fmt(R/10,4)+' ㎥',fmt(L*W*t/100,4)+' ㎥'],h:'厚さを m に直してから、3つかける',x:'厚さを m に：'+t+'mm → '+plain(t/1000)+'m<br>'+L+' × '+W+' × '+plain(t/1000)+' ＝ <b>'+fmt(R,4)+' ㎥</b>',k:[L,'×',W,'×',plain(t/1000),'=']};
+}
+function qSlope(){
+  const d=pick([2,3,4,5,10,20]),p=pick([1,1.5,2,3]);const H=d*p*10;
+  return {q:p+'% 勾配で '+d+'m 進むと、何 mm 下がる？',c:fmt(H)+' mm',w:[fmt(d*p)+' mm',fmt(H*10)+' mm',fmt(H*2)+' mm',fmt(H/10,2)+' mm'],h:'きょり(m) × ％ × 10 ＝ mm',x:d+'m ＝ '+(d*1000)+'mm。<br>'+(d*1000)+' × '+p+' ÷ 100 ＝ <b>'+fmt(H)+' mm</b><br><span class="small">近道：'+d+' × '+p+' × 10 ＝ '+fmt(H)+'</span>',k:[d*1000,'×',p,'÷',100,'=']};
+}
+function qScale(){
+  const s=pick([50,100,200]),m=pick([12,25,35,48,60,73]);const R=m*s;
+  return {q:'1/'+s+' の図面で '+m+'mm。本物は 何 m？',c:fmt(R/1000,3)+' m',w:[fmt(R/100,3)+' m',fmt(R/10000,4)+' m',fmt(R)+' m'],h:'測った長さ × 分母 ＝ 本物（mm）',x:m+' × '+s+' ＝ '+R+'mm ＝ <b>'+fmt(R/1000,3)+' m</b>',k:[m,'×',s,'=']};
+}
+function qWord(){
+  const w=pick(WORDS);const others=shuffle(WORDS.filter(x=>x.o!==w.o)).slice(0,3).map(x=>x.o);
+  return {q:'「<b>'+esc(w.s)+'</b>」の意味は？',c:w.o,w:others,h:'読み方：'+w.y,x:'<b>'+esc(w.s)+'</b>（'+esc(w.y)+'）＝ '+esc(w.o)+'<br><span class="small">'+esc(w.e)+'</span>',k:null};
+}
+function qWordRev(){
+  const w=pick(WORDS);const others=shuffle(WORDS.filter(x=>x.s!==w.s)).slice(0,3).map(x=>x.s);
+  return {q:'「'+esc(w.o)+'」を表すのは？',c:w.s,w:others,h:'カテゴリ：'+w.c,x:'<b>'+esc(w.s)+'</b>（'+esc(w.y)+'）<br><span class="small">'+esc(w.w)+'</span>',k:null};
+}
+function qCutFill(){
+  const P=pick([10,12.35,15.5,8.2,21.75]),dmm=pick([-300,-150,-50,-80,100,200,250]);const N=rd(P-dmm/1000,4);
+  const a=Math.abs(dmm),fill=dmm>0,A=fill?'盛り ':'切り ',B=fill?'切り ':'盛り ';
+  return {q:'計画高 '+P.toFixed(3)+'、いまの地面 '+N.toFixed(3)+'。どうする？',c:A+a+'mm',w:[B+a+'mm',A+(a*10)+'mm',A+(a/10)+'mm',B+(a*10)+'mm'],h:'計画高 − いまの高さ。＋なら盛る、−なら切る',
+    x:P.toFixed(3)+' − '+N.toFixed(3)+' ＝ '+sgnF(dmm/1000,3)+'m ＝ '+sgnF(dmm,0)+'mm<br>'+(fill?'＋なので <b>盛り '+a+'mm</b>':'−なので <b>切り '+a+'mm</b>（掘る）'),k:[P.toFixed(3),'−',N.toFixed(3),'=']};
+}
+function qNori(){
+  const H=pick([1,1.5,2,3,4]),n=pick([0.5,1.0,1.5,1.8,2.0]);const W=rd(H*n,4),ns=n.toFixed(1);
+  return {q:'法面 1:'+ns+'、高さ '+H+'m。横幅は 何m？',c:fmt(W,3)+' m',w:[fmt(H/n,3)+' m',fmt(H+n,3)+' m',fmt(W*10,3)+' m',fmt(W/10,3)+' m'],h:'横幅 ＝ 高さ × 右の数字',
+    x:'1:'+ns+' は「高さ1 に対して横に '+ns+'」。<br>'+H+' × '+ns+' ＝ <b>'+fmt(W,3)+' m</b>',k:[H,'×',ns,'=']};
+}
+function qDump(){
+  const V=pick([20,33,45,50,62,40,27]),p=pick([5,5.5,6]);const raw=V/p,c=Math.ceil(rd(raw,6)),f=Math.floor(rd(raw,6));
+  return {q:'運ぶ土が '+V+'㎥。1台 '+p+'㎥ 積むダンプで 何台？',c:c+'台',w:[(f!==c?f:c-1)+'台',(c+1)+'台',(c+2)+'台',(c-1)+'台'],h:'割り算して、小数が出たら切り上げ',
+    x:V+' ÷ '+p+' ＝ '+fmt(raw,2)+'<br>'+(f!==c?'小数が出たので切り上げ → <b>'+c+'台</b>':'ちょうど割り切れたので <b>'+c+'台</b>'),k:[V,'÷',p,'=']};
+}
+function qSoilL(){
+  const V=pick([10,20,30,40,50]),L=pick([1.2,1.25,1.3]);const R=rd(V*L,4);
+  return {q:'地山で '+V+'㎥ 掘った。L＝'+L+' なら、ほぐした土は 何㎥？',c:fmt(R,2)+' ㎥',w:[fmt(V/L,2)+' ㎥',fmt(V+L,2)+' ㎥',fmt(R*10,2)+' ㎥',V+' ㎥'],h:'掘るとふくらむ → L を「かける」',
+    x:'ほぐした量 ＝ 地山 × L<br>'+V+' × '+L+' ＝ <b>'+fmt(R,2)+' ㎥</b>',k:[V,'×',L,'=']};
+}
+function qStation(){
+  const n=pick([1,2,3,5,7,10,12,15]),m=pick([0,5,10,12.5,15]);const R=n*20+m,lbl='No.'+n+(m?'+'+m:'');
+  return {q:'測点 '+lbl+' は、起点から 何m？（20mごと）',c:fmt(R)+' m',w:[fmt(n*10+m)+' m',fmt(n*100+m)+' m',fmt(n+m)+' m',fmt(n*20)+' m',fmt(n*20+m*10)+' m'],h:'No.の数字 × 20 ＋「+」のうしろの数字',
+    x:n+' × 20'+(m?' ＋ '+m:'')+' ＝ <b>'+fmt(R)+' m</b>',k:m?[n,'×',20,'+',m,'=']:[n,'×',20,'=']};
+}
+function qLevel(){
+  const B=pick([10,25,8.5,12.3]),S=pick([1.2,1.35,1.52,1.8]),F=pick([0.95,1.1,1.25,1.64,2.05]);const G=rd(B+S-F,4);const f3=x=>rd(x,4).toFixed(3);
+  return {q:'BM の高さ '+f3(B)+'m。BM で '+f3(S)+'、測る点で '+f3(F)+' と読んだ。その点の高さは？',c:f3(G)+' m',w:[f3(B-S+F)+' m',f3(B+S+F)+' m',f3(B-F)+' m',f3(B+F)+' m'],h:'BM ＋ 後視 − 前視',
+    x:'器械高 ＝ '+f3(B)+' ＋ '+f3(S)+' ＝ '+f3(B+S)+'<br>その点 ＝ '+f3(B+S)+' − '+f3(F)+' ＝ <b>'+f3(G)+' m</b>',k:[f3(B),'+',f3(S),'−',f3(F),'=']};
+}
+const GEN={civil:[qCutFill,qNori,qDump,qSoilL,qStation,qLevel],unit:[qUnit],pct:[qPctA,qPctB,qPctC],av:[qArea,qVol],slope:[qSlope,qScale],word:[qWord,qWordRev]};
+const OK=['正解！','いいね、合ってる！','その調子！','バッチリ！','できてる！'];
+const NG=['おしい！','大丈夫、ここで覚えれば勝ち。','まちがえた問題ほど身につくよ。','ナイスチャレンジ！'];
+let qCat='all',cur=null,sess={n:0,ok:0,streak:0};
+$('#qCats').innerHTML=Object.keys(QCATS).map(k=>'<button type="button" data-qc="'+k+'" aria-pressed="'+(k===qCat)+'">'+QCATS[k]+'</button>').join('');
+function setCat(k){qCat=k;$$('#qCats button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.qc===k?'true':'false'));newQ();}
+$('#qCats').addEventListener('click',e=>{const b=e.target.closest('[data-qc]');if(b)setCat(b.dataset.qc);});
+function renderScore(){
+  $('#qScore').innerHTML='<span>今回 <b>'+sess.ok+'</b> / '+sess.n+' 問 正解</span>'+(sess.streak>=2?'<span>連続 <b>'+sess.streak+'</b> 問！</span>':'');
+}
+function newQ(){
+  const cat=qCat==='all'?pick(Object.keys(GEN)):qCat;cur=pick(GEN[cat])();cur.cat=cat;
+  const ch=[cur.c];for(const w of cur.w){if(ch.length>=4)break;if(ch.indexOf(w)<0&&w.indexOf('—')<0)ch.push(w);}
+  cur.choices=shuffle(ch);
+  $('#qCat').textContent=QCATS[cat];$('#qText').innerHTML=cur.q;
+  $('#qHint').hidden=true;$('#qHint').textContent=cur.h;$('#qHintBtn').hidden=false;
+  $('#qChoices').innerHTML=cur.choices.map((c,i)=>'<button class="choice" type="button" data-i="'+i+'">'+esc(c)+'</button>').join('');
+  $('#qFb').hidden=true;$('#qNext').hidden=true;cur.answered=false;renderScore();
+}
+$('#qHintBtn').addEventListener('click',()=>{$('#qHint').hidden=false;$('#qHintBtn').hidden=true;});
+$('#qChoices').addEventListener('click',e=>{
+  const b=e.target.closest('.choice');if(!b||cur.answered)return;cur.answered=true;
+  const val=cur.choices[+b.dataset.i];const ok=val===cur.c;
+  $$('.choice',$('#qChoices')).forEach(x=>{x.disabled=true;const v=cur.choices[+x.dataset.i];if(v===cur.c)x.classList.add('right');else if(x===b)x.classList.add('wrong');});
+  sess.n++;if(ok){sess.ok++;sess.streak++;}else sess.streak=0;
+  const t=store.get('tot',{ok:0,n:0});t.n++;if(ok)t.ok++;store.set('tot',t);
+  const fb=$('#qFb');fb.className='fb '+(ok?'ok':'ng');fb.hidden=false;
+  fb.innerHTML='<p class="head">'+pick(ok?OK:NG)+'</p><div><p><b>解き方</b></p><p>'+cur.x+'</p></div>'+(cur.k?'<div><p class="small"><b>電卓でこう押す</b></p>'+keys(cur.k)+'</div>':'');
+  $('#qHintBtn').hidden=true;$('#qNext').hidden=false;renderScore();
+});
+$('#qNext').addEventListener('click',()=>{newQ();$('#qCard').scrollIntoView({block:'start',behavior:'auto'});window.scrollBy(0,-80);});
+
+/* ---------- init ---------- */
+renderLinks();renderDone();renderStats();
+updUnit();updTape();updPg();updPc();updAv();updSl();updSc();updCf();updLv();updSo();renderWords();newQ();
+const h=(location.hash||'').replace('#','');
+if(VIEWNAME[h])show(h,null,true);else if(LESSONS.some(l=>l.id===h))show('learn',h,true);
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+</script>
+</body>
+</html>

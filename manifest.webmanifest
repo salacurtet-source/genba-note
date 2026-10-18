@@ -1,0 +1,26 @@
+{
+  "name": "現場の数字ノート",
+  "short_name": "数字ノート",
+  "description": "土木の現場で働きはじめた人のための、％・単位・切り盛り・土量の学習アプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F5EC",
+  "theme_color": "#4B5B2B",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
